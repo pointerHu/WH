@@ -1,0 +1,799 @@
+\documentclass[lettersize,journal]{IEEEtran}
+% \documentclass[onecolumn,12pt]{IEEEtran}
+% \usepackage{setspace}                     % 控制行距的宏包
+% \doublespacing         
+
+\usepackage{amsmath,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage[table]{xcolor}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{orcidlink}
+\usepackage{cite}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+\usepackage[utf8]{inputenc}
+% updated with editorial comments 8/9/2021
+\raggedbottom
+\usepackage{float} % 加载 float 包
+\usepackage{caption}
+\captionsetup{labelsep=period}
+\usepackage{enumitem}
+\usepackage{multirow} 
+\usepackage{url}
+\setlength{\parskip}{0pt} % 设置段间距为0
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{subcaption}
+
+
+
+\usepackage{hyperref} % 加入超链接支持
+\hypersetup{
+    colorlinks=true,       % 开启链接颜色
+    linkcolor=blue,        % 超链接颜色
+    citecolor=blue,        % 文献引用颜色
+    filecolor=magenta,     % 文件链接颜色
+    urlcolor=blue          % URL 链接颜色
+}
+
+\makeatletter
+\def\@cite#1#2{\textcolor{blue}{[{#1\if@tempswa , #2\fi}]}}
+\makeatother
+
+\begin{document}
+
+\title{KA-GZSL: Knowledge-Guided Audio–Visual Generalized Zero-Shot Learning}
+
+% \author{Hu~Wang, Jing~Yang$^{*}$,~\IEEEmembership{Member,~IEEE}, Xiaoli~Ruan,Yuling~Chen, Xinru~Yi, Chengjiang~Li and Minyi~Guo,~\IEEEmembership{Fellow,~IEEE}
+\author{
+Hu~Wang\orcidlink{0009-0008-1596-5311},  % 替换成你的ORCID号
+Jing~Yang$^{*}$\orcidlink{0000-0003-1915-9487},~\IEEEmembership{Member,~IEEE},
+Xiaoli~Ruan\orcidlink{0000-0002-7623-3308},
+Yuling~Chen\orcidlink{0000-0002-8674-8356},
+Xinru~Yi\orcidlink{0009-0007-4224-4774},
+Chengjiang~Li\orcidlink{0000-0002-1864-2023}
+and
+Minyi~Guo\orcidlink{0000-0003-0034-2302},~\IEEEmembership{Fellow,~IEEE}
+
+
+
+
+\thanks{This work is supported by the Key Project of Guizhou Basic Research Program (QKHZD [2026] 047), Science and Technology Research Project of Guizhou Provincial Department of Education (No.QJJ[2025]014), National Natural Science Foundation of China under Grant (Nos. 62441608, 62166005), Scientific and Technological Innovation Platform Research Project of Guizhou Province (CXPTXM[2025]024),
+Guizhou University Science and Technology Innovation Team ([2024] No.07),Guizhou University Basic Research Fund ([2024]08).(Corresponding author:Jing Yang.)\\
+  \indent Hu Wang, Xiaoli Ruan, Yuling Chen and Minyi Guo are with the State Key Laboratory
+ of Public Big Data, Guizhou University, Guiyang, 550025, China (e-mail: gs.wanghu24@gzu.edu.cn; xlruan@gzu.edu.cn; ylchen3@gzu.edu.cn; myguo@gzu.edu.cn).\\
+ \indent Jing Yang is with the State Key Laboratory of Public Big Data,Guizhou University,Guiyang 550025,China,and also with the Department of Computer Science and Engineering,Shanghai Jiao Tong University,Shanghai 200240,China (e-mail:jyang23@gzu.edu.cn).\\
+ \indent Xinru Yi is with the School of Mechanical Engineering, Guizhou University, Guiyang, Guizhou, 550025 China (e-mail:cme.xryi23@gzu.edu.cn)\\
+  \indent Chengjiang Li is with the School of Management, Guizhou University, Guiyang 550025, China. (e-mail: cjli3@gzu.edu.cn).\\
+  \indent  Minyi Guo is with the Department of Computer Science and Engineering, Shanghai Jiao Tong University, Shanghai 200240, China (e-mail: myguo@gzu.edu.cn).\\
+  }
+        % <-this % stops a space
+%\thanks{This paper was produced by the IEEE Publication Technology Group. They are in Piscataway, NJ.}% <-this % stops a space
+%\thanks{Manuscript received April 19, 2021; revised August 16, 2021.}
+}
+
+% The paper headers
+\markboth{IEEE TRANSACTIONS ON CONSUMER ELECTRONICS}%
+{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+
+%\IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+\maketitle
+\IEEEpubidadjcol
+\begin{abstract}
+Audio–visual generalized zero-shot learning aims to exploit the correlations among audio, visual, and semantic information to recognize and learn unseen classes. While AVCA and ClipClap-GZSL have made certain progress in terms of multimodal feature fusion, most existing methods rely on brief class labels for semantic modeling, making it difficult to adequately characterize fine-grained class semantics. Moreover, in real-world scenarios, these methods are vulnerable to weak audio–visual associations and modality noise. To address these issues, we propose knowledge-guided audio–visual generalized zero-shot learning (KA-GZSL), a method for aggregating external fine-grained knowledge and reducing distribution discrepancies across modalities. Specifically, we utilize large language models to perform fine-grained semantic expansion on class labels and combine them with the CLIP and CLAP text encoders to construct relational global action and relational global audio knowledge graphs, respectively, to enhance the semantic representation capability for unseen classes. Moreover, we design an audio–visual context encoder to fuse modality-specific and modality-shared information, thereby reducing the distribution discrepancy between different modalities. Furthermore, through the action knowledge graph and a cross-graph knowledge transfer mechanism, we structurally inject external prior knowledge into the audio–visual temporal features, explicitly modeling the deep correlations among audio, action, and visual features. The experimental results on three benchmark datasets—VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$—demonstrate that the proposed method outperforms state-of-the-art methods across multiple metrics.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Audio–visual zero-shot learning, Video classification, Action knowledge graph, Audio–visual context encoder.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Audio–visual generalized zero-shot learning (AVGZSL) aims to utilize the audio and visual bimodal information in videos to establish correlations between audio–visual features and textual features, allowing the model to not only recognize seen classes during training but also infer and recognize unseen classes. AVGZSL methods, such as CJME\cite{3}, AVGZSLNet\cite{4}, AVCA\cite{1}, and ClipClap-GZSL\cite{2}, have been widely applied in multimodal video understanding applications, especially in classification tasks involving unseen classes.
+
+
+AVCA and ClipClap-GZSL focus primarily on improving feature fusion strategies. As shown in the traditional method pipeline (Fig.~\ref{fig: Introduction}), existing mainstream approaches typically rely on transformer architectures (Fig.~\ref{fig: Introduction}a) or cross-attention mechanisms (Fig.~\ref{fig: Introduction}b) for the temporal interaction and fusion of audio–visual features after these features are extracted; then, these features are aligned with the text embeddings generated by the class labels in a joint embedding space. Nevertheless, such methods inevitably have two limitations: (i) the text modality relies on class labels, making it difficult to provide discriminative fine-grained semantics and leading to the problem of semantic ambiguity in the class names; and (ii) when faced with the weakly correlated audio–visual features prevalent in real-world videos, cross-attention mechanisms often perform indiscriminate dense computations because of the lack of explicit knowledge guidance, thereby introducing irrelevant modality noise.
+
+We considered the semantic encoding mechanism prior to feature fusion and argue that, in addition to extracting pretrained features, aggregating external fine-grained knowledge is crucial for simulating human cognition and understanding new concepts. To this end, we propose knowledge-guided audio–visual generalized zero-shot learning. Specifically, to address the limitations of semantic ambiguity in class names and weak correlations among audio‒visual features, we design an LLM-based \textbf{K}nowledge-\textbf{A}ugmented \textbf{S}emantics (KAS) component and an \textbf{A}ction \textbf{K}nowledge \textbf{G}raph (AKG). These components utilize the rich descriptions generated by LLMs to compensate for the lack of label information and establish knowledge-driven intrinsic connections among modalities. Moreover, to overcome the bottlenecks of significant modality distribution discrepancies and difficultly in deeply aligning the features, we introduce the \textbf{A}udio–\textbf{V}isual \textbf{C}ontext \textbf{E}ncoder (AVCE). This module does not rely on the traditional simple concatenation approach and instead mines specific contextual relations in audio–visual data. The graph-enhanced action semantics and the original audio–visual temporal features are mapped to a unified shared context space. As semantically relevant features are mapped nearby in this space, the model can effectively transfer information from semantic features to perceptual features under the guidance of knowledge when it encounters unseen classes.
+
+\begin{figure*}[htpb]
+    \centering
+    \includegraphics[width=0.83\textwidth]{figure/Introduction.pdf}
+    \caption{Illustration of the proposed method compared with the existing audio-visual GZSL methods. In previous audio–visual GZSL frameworks, traditional methods based on transformer-based methods (a) focused on intramodality feature representations but overlooked cross-modal interaction information. Moreover, cross-attention mechanisms (a) focused primarily on audio–visual feature alignment but neglected modality-specific information. Furthermore, in terms of the text modality, both approaches rely solely on brief class labels for embedding and lack sufficient semantic information. In contrast, our method (c) effectively addresses these limitations.}
+    \label{fig: Introduction}
+\end{figure*}
+
+
+To better train the model, a joint loss function is introduced for model training. This function is a weighted combination of a joint triplet loss, a projection loss, and a reconstruction loss; this function allows the model to learn the relationships among the audio features, visual features, and action knowledge. Through the synergistic constraint of this joint loss, our method can not only comprehensively capture complex correlations among modalities but also ensure cross-modal consistency between the audio–visual representations and the action graph, thereby effectively increasing the model's generalizability and reasoning capabilities for unseen classes.
+
+
+On the basis of the above design principles, we propose a novel framework for audio–visual generalized zero-shot learning. The main contributions of this work are summarized as follows:
+
+\begin{itemize}
+\item{We utilize large language models to expand the semantic space of classes and generate rich fine-grained descriptions to compensate for the semantic ambiguity caused by merely relying on class names, thereby increasing the model's semantic representation capability.}
+\item{We introduce an action knowledge graph to model audio‒visual temporal features as graph structures and utilize prior action logic to guide modality decoupling and denoising, which effectively addresses the prevalent weak audio‒visual correlations in real-world videos.}
+\item{We propose an audio–visual context encoder and a cross-graph knowledge transfer mechanism aimed at minimizing the differences in the distributions of different modalities in the manifold space. By forcibly aligning abstract semantic features with specific audio–visual features, efficient knowledge transfer from seen classes to unseen classes can be achieved.}
+\item{The experimental results on three AVGZSL benchmark datasets, i.e., VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$, demonstrate that the proposed model achieves state-of-the-art performance compared with existing methods.}
+\end{itemize}
+
+
+\section{Related Work}
+\subsection{Audio–Visual Zero-Shot Learning}
+
+Parida et al.\cite{3} utilized the AudioSet dataset to project video, audio, and text to a shared feature space and employed a triplet loss function to minimize the distance between features of the same class. Mazumder et al.\cite{4} proposed AVGZSLNet and introduced a cross-modal decoder to reconstruct text features from audio–visual embeddings, thereby endowing the embeddings with class-level semantic information. Additionally, Mercea et al.\cite{1} proposed the audio–visual cross-attention (AVCA) framework, which uses the transformer mechanism to exchange information between the audio and visual branches to increase feature discriminability. Furthermore, Mercea et al.\cite{5} introduced the TCAF framework, which exploits the inherent temporal structure of videos by processing sequential features through temporal cross-attention mechanisms rather than averaged features. Zheng et al.\cite{6} developed the audio–visual feature synthesis (AVFS) framework, which simulates unseen class features via generative models combined with discriminative learning. Moreover, Hong et al.\cite{7} incorporated hierarchical hyperbolic spaces and leveraged hyperbolic geometry to capture the hierarchical structure of the data. Li et al.\cite{8} explored the application of spiking neural networks (SNNs) to extract temporal features and decouple motion information. In addition, Chen et al.\cite{9} proposed KDA, which uses the rich descriptions generated by large language models to enhance semantic embeddings. Kurzendörfer et al.\cite{2} presented ClipClap-GZSL, which uses the robust features and text embeddings of the pretrained CLIP\cite{10} and CLAP\cite{11} models. Mo and Morgado\cite{12} proposed simplifying the learning process by optimizing class embeddings and using a supervised contrastive loss. Furthermore, Wen\cite{13} introduced the AV-OOD framework, in which an out-of-distribution (OOD) detector is trained in conjunction with a generative network, with unseen classes treated as OOD data. Yang et al.\cite{14} also proposed MSTR, which combines SNNs and tensor regression networks to extract fine-grained features while preserving high-dimensional spatial structures.
+
+
+Although existing audio–visual GZSL methods demonstrate considerable potential, they often overlook the semantic ambiguity of the class names\cite{15} and the prevalent weak correlations between the audio and visual modalities\cite{16}. Therefore, we propose a knowledge-guided audio–visual zero-shot learning framework. This framework introduces large language models to expand the semantic space of the classes and employs an action knowledge graph combined with a shared specific context encoder to explicitly model and align features of different modalities. This approach enhances the information interactions between abstract knowledge and specific audio–visual data, thereby facilitating deep semantic consistency among audio–visual data in complex scenarios.
+
+\subsection{Semantics-Guided Audio–Visual Learning}
+
+Xia et al.\cite{17} developed Skating-Mixer to mine semantic correlations between action execution and background music from long-form figure skating videos and utilized natural signals such as musical accents to guide temporal feature extraction\cite{18}. In addition, Du et al.\cite{19} proposed the semantic guidance network (SGN), which transforms high-level semantic descriptions from professional commentators into supervisory signals via a teacher–student architecture, guiding the visual branch to learn professionally discriminative representations. Majeedi et al.\cite{20} introduced the $\text{RICA}^2$ framework, which encodes the scoring criteria of human experts into a graph structure to guide the model towards probabilistic alignment and uncertainty calibration within the latent space. Furthermore, Xu et al.\cite{21} leveraged pretrained knowledge from CLIP to achieve multigranular audio–visual semantic alignment and embedded professional terminology into video features to perceive small quality deviations\cite{22}. Liang et al.\cite{23} applied semantic guidance to joint audio–visual editing and used linguistic instructions as semantic anchors to ensure that the generated sound effects were logically aligned with the visual changes.
+
+
+The proposed framework fully leverages the advantages of knowledge-driven representation learning to construct a hierarchical architecture enhanced by knowledge semantics. By introducing the topological constraints of action knowledge graphs, the model effectively achieves fine-grained semantic expansion during the knowledge acquisition stage. Additionally, during the feature fusion stage, an audio‒visual context encoder is employed to balance modality-specific information with multimodal correlations.
+
+\subsection{Audio–Visual Learning and Graph Neural Networks}
+
+Moitreya et al.\cite{24} proposed a scene graph-based audio source separation method, modeled visual frames as graph structures composed of object nodes and spatial relationship edges, and leveraged the sparsity in the visual images to separate different features\cite{25}. PSOT\cite{26} addresses audio–visual question-answering tasks by constructing cascaded motion-driven, sound-driven, and question-driven graphs, achieving patch-level tracking from coarse-grained motion filtering to fine-grained semantic focus. Additionally, Xu et al.\cite{27} addressed the lack of direct correlations between background music and actions in long-term sports assessment tasks; by utilizing the linguistic modality as a low-cost guidance signal, they explicitly modeled the complex associations among audio, action, and visual features, which allowed accurate assessment of long-term complex movement variations. Moreover, Liu et al.\cite{28} proposed AVSGN, which introduces text as a “semantic anchor” in fully supervised audio–visual event localization tasks; background noise is dynamically filtered through decoupled audio–visual, visual–text, and audio–text subgraphs\cite{29}. For weakly supervised video parsing, TEn-CATS\cite{30} involves a category-aware multiscale temporal graph, with the graph topology dynamically adjusted on the basis of the duration of the predicted events. SHRIKE\cite{31} integrates Kolmogorov–Arnold networks (KANs) with multimodal scene graphs and utilizes variable activation functions to handle complex audio–visual temporal logic.
+
+
+The knowledge-guided audio–visual zero-shot learning framework proposed in this paper fully leverages the structured modeling strengths of large language models and graph neural networks (GNNs). By adopting cross-graph knowledge transfer and context constraint mechanisms and utilizing action prior guidance at the feature level, the framework aligns abstract knowledge with specific audio–visual data, thereby yielding deep semantic consistency.
+
+
+\section{The Method}
+
+\subsection{Problem definition}
+In the audio--visual zero-shot learning setting, let $\mathcal{C}^{s}$ and $\mathcal{C}^{u}$ denote the disjoint sets of seen and unseen classes, respectively, where $\mathcal{C}^{s}\cap\mathcal{C}^{u}=\emptyset$. Their union is denoted by $\mathcal{C}=\mathcal{C}^{s}\cup\mathcal{C}^{u}$, and $N_c=|\mathcal{C}|$ is the total number of classes. The training set is $\mathcal{D}_{\mathrm{tr}}^{s}=\{(a_i^{s},v_i^{s},y_i^{s})\}_{i=1}^{N_{\mathrm{tr}}}$, where $a_i^{s}$, $v_i^{s}$, and $y_i^{s}\in\mathcal{C}^{s}$ denote the audio input, visual input, and ground-truth label of the $i$-th training sample, respectively. No audio--visual sample from $\mathcal{C}^{u}$ is used for training. Standard ZSL evaluates samples whose labels belong to $\mathcal{C}^{u}$, whereas GZSL evaluates samples from $\mathcal{C}^{s}\cup\mathcal{C}^{u}$. We denote the unseen test subset by $\mathcal{D}_{\mathrm{te}}^{u}=\{(a_i^{u},v_i^{u},y_i^{u})\}_{i=1}^{N_{\mathrm{te}}^{u}}$. Class-level textual side information is available for all classes in $\mathcal{C}$, as permitted by the standard zero-shot learning protocol.
+
+
+
+\subsection{Overall framework}
+\textbf{Overall architecture.} In conventional methods, the text branch typically relies only on class labels to generate semantic embeddings, which are used only for the optimization of the final loss function. In contrast, our method leverages rich textual descriptions of the class labels and combines them with graph convolutional networks to construct a knowledge graph, thereby guiding and promoting the fusion of the audio and visual modalities. As shown in Fig.~\ref{fig:KA-GZSL}, the proposed framework consists of three main components: the KAS module, the AKG module, and the AVCE module. First, during the feature extraction stage, the KAS module provides fine-grained descriptions of each class to enrich the category semantics, thereby alleviating the issue of the limited expressive capability of the class name embeddings in previous methods. Second, the AVCE module is designed to fuse modality-specific features and modality-shared features, addressing the modality interference and semantic loss caused by direct concatenation and producing more discriminative cross-modal representations. In the relational graph construction stage, the AKG module employs graph convolutional networks to fuse the action knowledge and audio–visual temporal features in a structured manner, thereby mitigating the weak correlations between the visual and audio modalities and the poor coupling introduced by naively concatenating features with knowledge.
+
+\subsection{Knowledge-Augmented Semantics}
+In audio–visual generalized zero-shot learning, the model must transfer knowledge learned from seen classes to unseen classes. However, existing methods are limited by coarse-grained semantic representations and ambiguous action concepts. For example, for semantically similar unseen classes such as playing basketball and slam dunk, it is difficult to distinguish the differences among various actions using only the class labels. Inspired by the way in which humans leverage knowledge bases to improve our understanding of novel visual concepts, we propose the KAS module, which uses a large language model to transform abstract class labels into concrete and detailed action semantic descriptions. Specifically, by designing task-specific prompt templates, we guide the LLM to generate detailed descriptions containing visual, motion, and auditory characteristics, thereby enhancing the model’s ability to understand and discriminate unseen classes.
+
+
+To address the issue that different modalities emphasize various aspects of semantics (for instance, in playing basketball, the visual modality focuses more on the dribbling motion, whereas the audio modality emphasizes the sound of the ball striking the floor), we construct a global visual action semantic repository and a global audio action semantic repository. For each class $y_n\in\mathcal{C}$, we instantiate a visual prompt $p_n^v$ and an audio prompt $p_n^a$ from the generic templates “a photo of a person doing {category}” and “a person doing {category} can be heard,” respectively. These modality-specific prompts introduce visual and auditory action knowledge for all $N_c$ classes.
+
+
+Each class label is subsequently fed into the LLM to generate a detailed natural language description. The generated description is combined with the corresponding modality-specific prompt to characterize the visual appearance, motion pattern, and auditory properties of that class:
+\begin{equation}
+D_n^v=\operatorname{ConcatText}\left(p_n^v,\operatorname{LLM}(y_n)\right),\quad n=1,\ldots,N_c
+\end{equation}
+\begin{equation}
+D_n^a=\operatorname{ConcatText}\left(p_n^a,\operatorname{LLM}(y_n)\right),\quad n=1,\ldots,N_c
+\end{equation}
+where $\operatorname{LLM}(\cdot)$ generates a detailed class description and $\operatorname{ConcatText}(\cdot,\cdot)$ denotes textual concatenation. For example, the LLM can be prompted with “Please provide a detailed explanation of the body movements involved in playing basketball.” Here, $D_n^v$ and $D_n^a$ denote the visual-oriented and audio-oriented descriptions of class $y_n$, respectively.
+
+
+For the textual embeddings of the class labels, we use the CLIP and CLAP text encoders:
+\begin{equation}
+\left\{ f_n^{\mathrm{txt},v} \right\}_{n=1}^{N_c} =\text{Encoder}_\text{CLIP-T} \left( \left\{ D_n^v \right\}_{n=1}^{N_c} \right)
+\end{equation}
+\begin{equation}
+\left\{ f_n^{\mathrm{txt},a} \right\}_{n=1}^{N_c} = \text{Encoder}_\text{CLAP-T} \left( \left\{ D_n^a \right\}_{n=1}^{N_c} \right)
+\end{equation}
+where $\text{Encoder}_\text{CLIP-T}$ and $\text{Encoder}_\text{CLAP-T}$ are frozen text encoders. The features $f_n^{\mathrm{txt},v}$ and $f_n^{\mathrm{txt},a}$ provide the visual-oriented and audio-oriented semantic representations of class $y_n$, respectively.
+
+
+\begin{figure*}[htpb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figure/KA-GZSL.pdf}
+    \caption{Overview of the proposed KA-GZSL. First, the basic visual and audio features are extracted separately from the input video. Then, during the KAS stage, an external large language model is used to expand the simple class labels into fine-grained semantic descriptions, which are then encoded by pretrained text encoders CLIP and CLAP to obtain the corresponding textual semantic features. Subsequently, the AVCE processes the extracted audio–visual features by integrating modality-specific information and modality-shared temporal information in the latent space. Afterward, the AKG module performs cross-graph knowledge transfer via graph convolutional networks. Global action semantics are injected into the specific audio–visual temporal features to explicitly model the deep cross-modal constraints between the audio and visual modalities. Finally, the enhanced and fused audio‒visual multimodal features are projected to a common embedding space aligned with the textual semantic features under the joint optimization of the overall loss function.}
+    \label{fig:KA-GZSL}
+\end{figure*}
+
+
+To reduce the weak correlations between the visual content (e.g., actions) and audio content (e.g., background music and ambient sounds), for both the visual and audio inputs, we divide each video into T nonoverlapping 32-frame consecutive segments \cite{32}. Accordingly, for the input visual segments $v_T$, the feature extraction process is defined as follows:
+\begin{equation}
+\left\{ F_t^v \right\}_{t=1}^T = \text{Encoder}_\text{CLIP-V} \left( v_T \right)
+\end{equation}
+where $\text{Encoder}_\text{CLIP-V}$ denotes the CLIP image encoder and $\left\{ F_t^v \right\}_{t=1}^T$ is the visual feature vector extracted from the $t$-th video segment.
+
+
+For the audio modality, feature extraction is performed using CLAP. The raw audio segments $a_T$ are first preprocessed. The audio feature extraction process can be written as follows:
+\begin{equation}
+\left\{ F_t^a \right\}_{t=1}^T = \text{Encoder}_\text{CLAP-A}\left( a_T \right)
+\end{equation}
+where $\text{Encoder}_\text{CLAP-A}$ denotes the CLAP audio encoder and $\left\{ F_t^a \right\}_{t=1}^T$ denotes the feature extracted from the $t$-th audio segment.
+
+\subsection{Audio–Visual Context Encoding}
+In multimodal learning, the effective use of the rich and diverse information from different modalities remains a key issue. Although modality-specific features can provide clean and diverse modality-aware information, under language supervision, these features may still lead to shallow unimodal learning. More specifically, our goal is to learn the latent associations among audio, action, and visual features rather than independently modeling isolated action–audio and action–visual relationships. To this end, we design an audio–visual context encoder to fuse modality-specific information with modality-shared information.
+
+
+For modality-specific information, frozen pretrained encoders are adopted to extract the raw modality features, thereby preserving the fundamental representation capability of each modality. Specifically, the ViT-B/32 encoder of CLIP is used to extract the visual-specific features $\left\{ F_t^v \right\}_{t=1}^T$, while the audio encoder of CLAP is employed to extract the audio-specific features $\left\{ F_t^a \right\}_{t=1}^T$.
+
+
+We subsequently employ trainable token projection networks to project the modality-specific features to a latent space with a unified feature dimension. The projected features are denoted as $\left\{ P_t^v \right\}_{t=1}^T$ and $\left\{ P_t^a \right\}_{t=1}^T$, respectively:
+\begin{equation}
+\left\{ P_t^v \right\}_{t=1}^T = \text{Proj}_v \left( \left\{ F_t^v \right\}_{t=1}^T \right)
+\end{equation}
+\begin{equation}
+\left\{ P_t^a \right\}_{t=1}^T = \text{Proj}_a \left( \left\{ F_t^a \right\}_{t=1}^T \right)
+\end{equation}
+where $\text{Proj}_v(\cdot)$ and $\text{Proj}_a(\cdot)$ denote two-layer multilayer perceptrons for the visual and audio features, respectively, which map the modality-specific features to a shared $d$-dimensional space.
+
+
+For the modality-shared information, the projected features are fed into a shared encoder $\text{Encoder}_s$:
+\begin{equation}
+\left\{ Z_t^v \right\}_{t=1}^T = \text{Encoder}_s \left( \left\{ P_t^v \right\}_{t=1}^T \right)
+\end{equation}
+\begin{equation}
+\left\{ Z_t^a \right\}_{t=1}^T = \text{Encoder}_s \left( \left\{ P_t^a \right\}_{t=1}^T \right)
+\end{equation}
+where $\text{Encoder}_s(\cdot)$ denotes the shared transformer encoder. The shared transformer encoder\cite{33} captures long-range and modality-invariant temporal context, which is particularly crucial for the analysis of long videos and human-centered tasks.
+
+
+Finally, the modality-specific features and the modality-shared features are combined via elementwise summation, yielding $\left\{ f_t^v \right\}_{t=1}^T$ and $\left\{ f_t^a \right\}_{t=1}^T$. Accordingly, the feature extraction process can be rewritten as follows:
+\begin{equation}
+\left\{ f_t^v \right\}_{t=1}^T = \left\{ P_t^v \right\}_{t=1}^T \oplus \left\{ Z_t^v \right\}_{t=1}^T
+\end{equation}
+\begin{equation}
+\left\{ f_t^a \right\}_{t=1}^T = \left\{ P_t^a \right\}_{t=1}^T \oplus \left\{ Z_t^a \right\}_{t=1}^T
+\end{equation}
+where $\oplus$ denotes elementwise addition. Here, $\left\{ f_t^v \right\}_{t=1}^T$ represents the fused visual features of the $t$-th video segment, which includes modality-specific and modality-shared information, and $\left\{ f_t^a \right\}_{t=1}^T$ represents the corresponding fused audio features of the $t$-th audio segment.
+
+
+\subsection{Action Knowledge Graph}
+To address the limitations of previous methods, in which audio–visual features and class knowledge are fused merely through simple concatenation, resulting in weak semantic associations, we introduce the action knowledge graph to fuse the knowledge representations and audio–visual temporal features in a structured manner. On the basis of graph convolutional networks (GCNs), this module produces two independent knowledge–temporal interaction graphs for the visual and audio modalities. Specifically, the visual branch captures the temporal continuity of the visual features and their associations with the global visual semantics, whereas the audio branch captures the rhythmic variation patterns of the audio features and their associations with the global audio semantics. Through cross-graph message passing, the AKG enables deep integration between the knowledge representations and features, thereby improving the model’s semantic understanding and discriminative ability for unseen classes. This process involves two key steps: graph construction and cross-graph knowledge transfer.
+
+\subsubsection{Graph Construction}
+Let $m\in\{v,a\}$ index the visual and audio modalities. The modality-specific text projection $\operatorname{Proj}_{\mathrm{txt},m}$ maps each class semantic feature to the same $d$-dimensional space as the AVCE output. The initial class-knowledge node matrix and temporal node matrix are defined as
+\begin{equation}
+K_{\mathrm{act}}^{m,(0)} = \operatorname{Stack}_{n=1}^{N_c}\left(\operatorname{Proj}_{\mathrm{txt},m}\left(f_n^{\mathrm{txt},m}\right)\right)\in\mathbb{R}^{N_c\times d}
+\end{equation}
+\begin{equation}
+H_m^{(0)} = \operatorname{Stack}_{t=1}^{T}\left(f_t^m\right)\in\mathbb{R}^{T\times d}
+\end{equation}
+where $\operatorname{Stack}$ arranges its vector arguments row-wise. Thus, $K_{\mathrm{act}}^{v,(0)}$ and $K_{\mathrm{act}}^{a,(0)}$ form the node matrices of the relational global action knowledge graph $G_{\mathrm{act}}^v$ and the relational global audio knowledge graph $G_{\mathrm{act}}^a$, respectively, whereas $H_v^{(0)}$ and $H_a^{(0)}$ form the node matrices of the visual and audio temporal graphs $G_v$ and $G_a$, respectively.
+
+For the two knowledge graphs, the semantic relation between class nodes $n$ and $n'$ is measured by cosine similarity. For the two temporal graphs, the relation between segments $t$ and $t'$ is computed in the same manner:
+\begin{equation}
+\rho_{\mathrm{act},nn'}^m
+=\frac{\left(f_n^{\mathrm{txt},m}\right)^{\top}f_{n'}^{\mathrm{txt},m}}{\left\|f_n^{\mathrm{txt},m}\right\|_2\left\|f_{n'}^{\mathrm{txt},m}\right\|_2}
+\end{equation}
+\begin{equation}
+\rho_{tt'}^m
+=\frac{\left(f_t^m\right)^{\top}f_{t'}^m}{\left\|f_t^m\right\|_2\left\|f_{t'}^m\right\|_2}
+\end{equation}
+Each class node is connected to its $k_{\mathrm{cls}}$ most similar class nodes. Each temporal node is connected both to its immediate temporal neighbors and to its $k_{\mathrm{tmp}}$ most similar nonself temporal nodes:
+\begin{equation}
+\mathcal{E}_{\mathrm{act}}^m=
+\left\{(n,n')\mid n'\in\operatorname{TopKIdx}_{k_{\mathrm{cls}}}
+\left(\left\{\rho_{\mathrm{act},nq}^m\mid q\ne n\right\}\right)\right\}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+\mathcal{E}_m={}&\left\{(t,t')\mid 0<|t-t'|\le 1\right\}\\
+&\cup\left\{(t,t')\mid t'\in\operatorname{TopKIdx}_{k_{\mathrm{tmp}}}
+\left(\left\{\rho_{tq}^m\mid q\ne t\right\}\right)\right\}
+\end{aligned}
+\end{equation}
+Here, $\operatorname{TopKIdx}_k$ returns the indices of the $k$ largest similarity values. We use $k_{\mathrm{cls}}=5$ and $k_{\mathrm{tmp}}=\min(3,T-1)$. This hybrid temporal topology preserves local continuity while also capturing nonlocal segments with similar visual content or acoustic patterns. No additional similarity threshold is used; the top-$k$ rules provide a consistent sparsity level across datasets.
+
+The raw edge-weight matrices $B_{\mathrm{act}}^m\in\mathbb{R}^{N_c\times N_c}$ and $B_m\in\mathbb{R}^{T\times T}$ are obtained by shifting the retained cosine similarities to the nonnegative interval $[0,1]$:
+\begin{equation}
+\left(B_{\mathrm{act}}^m\right)_{nn'}=
+\begin{cases}
+\dfrac{1+\rho_{\mathrm{act},nn'}^m}{2} & (n,n')\in\mathcal{E}_{\mathrm{act}}^m\\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+\begin{equation}
+\left(B_m\right)_{tt'}=
+\begin{cases}
+\dfrac{1+\rho_{tt'}^m}{2} & (t,t')\in\mathcal{E}_m\\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+Because top-$k$ neighborhoods can be asymmetric, the raw matrices are symmetrized before self-loops are added. We define the symmetrized self-loop matrices as $R_{\mathrm{act}}^m=\max(B_{\mathrm{act}}^m,(B_{\mathrm{act}}^m)^{\top})+I_{N_c}$ and $R_{\mathrm{tmp}}^m=\max(B_m,B_m^{\top})+I_T$. The normalized knowledge-graph and temporal-graph adjacency matrices are computed separately:
+\begin{equation}
+\widehat A_{\mathrm{act}}^m = \left[\operatorname{diag}\left(R_{\mathrm{act}}^m\mathbf{1}_{N_c}\right)\right]^{-1/2}
+R_{\mathrm{act}}^m
+\left[\operatorname{diag}\left(R_{\mathrm{act}}^m\mathbf{1}_{N_c}\right)\right]^{-1/2}
+\end{equation}
+\begin{equation}
+\widehat A_{\mathrm{tmp}}^m = \left[\operatorname{diag}\left(R_{\mathrm{tmp}}^m\mathbf{1}_{T}\right)\right]^{-1/2}
+R_{\mathrm{tmp}}^m
+\left[\operatorname{diag}\left(R_{\mathrm{tmp}}^m\mathbf{1}_{T}\right)\right]^{-1/2}
+\end{equation}
+Here, $\max(\cdot,\cdot)$ is applied elementwise, $I_{N_c}$ and $I_T$ add self-loops, and $\operatorname{diag}(R_{\mathrm{act}}^m\mathbf{1}_{N_c})$ and $\operatorname{diag}(R_{\mathrm{tmp}}^m\mathbf{1}_T)$ are the corresponding degree matrices. The knowledge-graph topology is constructed once from the frozen class text embeddings and remains fixed. The temporal-graph topology is deterministically recomputed for each input from the AVCE features and then shared by all AKG layers. These adjacency matrices are not free trainable parameters; $\operatorname{Proj}_{\mathrm{txt},m}$ and the graph-convolution weights are learned during training. All $N_c$ class-level text nodes, including unseen-class nodes, participate in the knowledge graphs, but no audio--visual sample from an unseen class is used to construct either the knowledge graphs or the temporal graphs.
+
+\subsubsection{Cross-Graph Knowledge Transfer}
+The purpose of the AKG is to use the global, class-level semantic repositories to guide sample-level temporal representations without allowing individual samples to alter the global class prototypes. We therefore employ two parallel one-way transfer streams: $G_{\mathrm{act}}^v\rightarrow G_v$ and $G_{\mathrm{act}}^a\rightarrow G_a$. For the $l$-th AKG layer, where $l=0,\ldots,L_{\mathrm{AKG}}-1$, intragraph propagation is first performed in both the knowledge graph and the corresponding temporal graph:
+\begin{equation}
+K_{\mathrm{act}}^{m,(l+1)}=
+\sigma\left(
+\widehat A_{\mathrm{act}}^mK_{\mathrm{act}}^{m,(l)}W_{\mathrm{act},m}^{(l)}
+\right)
+\end{equation}
+\begin{equation}
+\widetilde H_m^{(l+1)}=
+\sigma\left(
+\widehat A_{\mathrm{tmp}}^mH_m^{(l)}W_{\mathrm{tmp},m}^{(l)}
+\right)
+\end{equation}
+where $W_{\mathrm{act},m}^{(l)}$ and $W_{\mathrm{tmp},m}^{(l)}$ are learnable graph-convolution weights, $L_{\mathrm{AKG}}$ is the number of AKG layers, and $\sigma(\cdot)$ is the ReLU activation. The intermediate representation $\widetilde H_m^{(l+1)}$ contains intragraph temporal context before class knowledge is injected.
+
+The updated temporal nodes serve as queries, and the updated class-knowledge nodes serve as keys and values. Their row-wise knowledge-to-temporal mapping is
+\begin{equation}
+\Lambda_{\mathrm{act}\rightarrow m}^{(l+1)}=
+\operatorname{Softmax}_{N_c}\left(
+\frac{\widetilde H_m^{(l+1)}\left(K_{\mathrm{act}}^{m,(l+1)}\right)^{\top}}{\sqrt{d}}
+\right)
+\in\mathbb{R}^{T\times N_c}
+\end{equation}
+where $\operatorname{Softmax}_{N_c}$ normalizes every temporal-node row over the $N_c$ class-knowledge nodes. The current layer then injects the updated knowledge representations into the updated temporal representations:
+\begin{equation}
+H_m^{(l+1)}=
+\sigma\left(
+\widetilde H_m^{(l+1)}+
+\Lambda_{\mathrm{act}\rightarrow m}^{(l+1)}
+K_{\mathrm{act}}^{m,(l+1)}W_{\mathrm{cross},m}^{(l)}
+\right)
+\end{equation}
+where $W_{\mathrm{cross},m}^{(l)}$ is a learnable knowledge projection. The first term preserves the intragraph temporal context, whereas the second term aggregates class-level semantic knowledge according to the relevance of each class node to each temporal segment. No reverse temporal-to-knowledge update is performed; consequently, the class repositories remain global and sample-independent while still providing modality-specific guidance to the visual and audio streams.
+
+
+\subsection{Projection to the Joint Embedding Space}
+After $L_{\mathrm{AKG}}$ knowledge-transfer layers, the visual and audio temporal node matrices are $H_v^{(L_{\mathrm{AKG}})}\in\mathbb{R}^{T\times d}$ and $H_a^{(L_{\mathrm{AKG}})}\in\mathbb{R}^{T\times d}$, respectively. We denote their $t$-th rows by $h_{v,t}^{(L_{\mathrm{AKG}})}$ and $h_{a,t}^{(L_{\mathrm{AKG}})}$. These node representations contain both temporal context and class-level semantic knowledge. Global average pooling over the $T$ temporal nodes yields
+\begin{equation}
+\bar{v}=\frac{1}{T}\sum_{t=1}^{T}h_{v,t}^{(L_{\mathrm{AKG}})}
+\end{equation}
+\begin{equation}
+\bar{a}=\frac{1}{T}\sum_{t=1}^{T}h_{a,t}^{(L_{\mathrm{AKG}})}
+\end{equation}
+Here, $\bar{v}$ and $\bar{a}$ are the aggregated global visual and audio vectors, respectively; $T$ is the number of temporal segments and is distinct from the class-node count $N_c$.
+
+
+Since the primary objective of AVGZSL is to predict the textual label category of the input sample, we employ a projection layer and a reconstruction layer to map the joint audio–visual embeddings to a unified space and reconstruct the projected features to preserve the original information. This design ensures the comparability of the features from different modalities. To fully exploit multimodal complementarity, the visual and audio vectors are concatenated and projected to a common space with the same dimensionality as the semantic embeddings via a fully connected layer as follows:
+\begin{equation}
+O_{\text{av}} = W_{\text{proj}} \cdot \left[ \bar{v} \parallel \bar{a} \right] + b_{\text{proj}}
+\end{equation}
+where $\left[ \cdot \parallel \cdot \right]$ denotes the feature concatenation operation, $W_{\text{proj}}$ and $b_{\text{proj}}$ are the learnable projection weights and bias, respectively, and $O_{\text{av}}$ is the final audio–visual hybrid representation used for classification. Similarly, the class semantic embeddings are projected to obtain $\{O_w^n\}_{n=1}^{N_c}$. During inference, the predicted class is determined by the projected class semantic embedding nearest to the projected audio--visual representation:
+\begin{equation}
+\widehat n=\operatorname*{arg\,min}_{1\le n\le N_c}\left\|O_w^n-O_{\text{av}}\right\|_2
+\end{equation}
+where $O_w^n$ is the projected semantic representation of class $y_n$, $\widehat n$ is the predicted class index, and $\widehat y=y_{\widehat n}$ is the corresponding class label.
+
+
+\subsection{Loss function}
+The model is trained by optimizing the overall loss $L_{\mathrm{total}}$. It comprises the joint triplet loss $L_{\mathrm{tri}}$, projection loss $L_{\mathrm{proj}}$, and reconstruction loss $L_{\mathrm{rec}}$.
+
+
+Joint Triplet Loss. The joint triplet loss $L_{\mathrm{tri}}$ plays a crucial role in clustering the final audio–visual embeddings, ensuring both compactness within classes and separability across classes. It is formally defined as follows:
+\begin{equation}
+L_{\mathrm{tri}} = \left[ \gamma + O_{\text{av}}^+ - O_w^+ \right]_+ + \left[ \gamma + O_{\text{av}}^- - O_w^+ \right]_+
+\end{equation}
+where $\gamma$ is the minimum margin between the mismatched negative pairs from different modalities and the correctly matched audio–visual embedding. Here, $O_w$ denotes the textual embedding, $O_{\text{av}}^+$ and $O_{\text{av}}^-$ denote the positive and negative samples, respectively, and $\left[ x \right]_+ \equiv \max(x,0)$.
+
+
+Projection Loss. The projection loss $L_{\mathrm{proj}}$ minimizes the distance between each projected audio--visual embedding and the semantic embedding of its ground-truth class:
+\begin{equation}
+L_{\mathrm{proj}}=\frac{1}{N_{\mathrm{mb}}}\sum_{i=1}^{N_{\mathrm{mb}}}
+\left\|O_{\mathrm{av},i}-O_w^{y_i}\right\|_2^2
+\end{equation}
+where $N_{\mathrm{mb}}$ is the minibatch size, $i$ indexes samples within the minibatch, and $O_w^{y_i}$ is the projected semantic representation of the ground-truth class $y_i$.
+
+
+Reconstruction Loss. The reconstruction loss $L_{\mathrm{rec}}$ aims to preserve the original data distribution when the features are embedded in the unified space. The architecture of the reconstruction layer is similar to that of the projection layer, and the loss is formulated as follows:
+\begin{equation}
+L_{\mathrm{rec}}=\frac{1}{N_{\mathrm{mb}}}\sum_{i=1}^{N_{\mathrm{mb}}}
+\left\|O_{\mathrm{av},i}^{\mathrm{rec}}-O_{w,y_i}^{\mathrm{rec}}\right\|_2^2
+\end{equation}
+where $O_{\mathrm{av},i}^{\mathrm{rec}}$ and $O_{w,y_i}^{\mathrm{rec}}$ are the reconstructed audio--visual and class-semantic representations associated with sample $i$, respectively.
+
+
+The overall loss function is formulated as follows:
+\begin{equation}
+\label{eq:total_loss}
+L_{\mathrm{total}}=\alpha L_{\mathrm{tri}}+\beta L_{\mathrm{proj}}+\varphi L_{\mathrm{rec}}
+\end{equation}
+where $\alpha$, $\beta$, and $\varphi$ are the weighting coefficients of the corresponding loss terms. This composite loss function enables the model to learn effective embeddings and reconstruct audio–visual features, thereby achieving superior performance on various benchmark datasets.
+
+
+\section{Experiment}
+
+
+
+\subsection{Experimental setup}
+\subsubsection{Dataset}
+We evaluate our method on three benchmark datasets that are widely used in the AVGZSL task: VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$. The detailed splits of each dataset, including the total number of classes, the numbers of seen and unseen classes, and the numbers of seen and unseen classes in the first and second stages, are summarized in Table \ref{tab:dataset_split}. Here, C denotes the total number of classes, S denotes the total number of seen classes, U denotes the total number of unseen classes, $\text{Tr}_\text{S}$ denotes the number of seen classes in the training set, $\text{Val}_\text{S}$ denotes the number of seen classes in the validation set, $\text{Val}_\text{U}$ denotes the number of unseen classes in the validation set, $\text{Te}_\text{S}$ denotes the number of seen classes in the test set, and $\text{Te}_\text{U}$ denotes the number of unseen classes in the test set.
+
+
+\textbf{VGGSound-GZSL}$^{\textbf{\textit{cls}}}$ is a modified version of the large-scale audio–visual dataset VGGSound\cite{34}. It contains a total of 276 classes, including 138 seen classes and 138 unseen classes. These classes can be roughly grouped into several major categories, such as animals, homes, music, nature, humans, sports, tools, vehicles, and others.
+
+
+\textbf{UCF-GZSL}$^{\textbf{\textit{cls}}}$ is a subset of the UCF101 action recognition dataset\cite{35}. This dataset covers a wide range of daily activities, sports, and entertainment behaviors collected from YouTube. It consists of 51 classes, including 30 seen classes and 21 unseen classes. The categories include but are not limited to fencing, playing piano, dancing, and swimming.
+
+
+\textbf{ActivityNet-GZSL}$^{\textbf{\textit{cls}}}$ is an action recognition dataset derived from ActivityNet\cite{36} that is specifically designed to support action recognition tasks. It contains 200 categories of daily activities, with more than 20,000 video clips and a total duration exceeding 849 hours. Each video clip in the dataset is accurately annotated with action categories and temporal boundaries, thus providing detailed data for training and evaluation.
+
+
+\subsubsection{Implementation details}
+The model is implemented via the PyTorch framework. The experiments are conducted on a platform equipped with an Intel(R) Core(TM) i9-14900KF CPU, 128 GB of RAM, an NVIDIA GeForce RTX 3090Ti GPU, and Ubuntu 24.04. We train the model using the Adam optimizer\cite{37}, with a weight decay of $1e^{-5}$, $\beta_1 = 0.9$, and $\beta_2 = 0.999$. The batch size is set to 64. The model achieves the best performance when the coefficients in Eq. \eqref{eq:total_loss} are set to $\alpha$=0.5, $\beta$=0.7, and $\varphi$=0.5.
+
+
+The initial learning rates for the VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$ datasets are $1e^{-4}$, $7e^{-5}$, and $1e^{-4}$, respectively. During training, if the validation HM score does not increase for three consecutive epochs, the learning rate is decreased by a factor of 0.1. In the first training stage, the models are trained for 15 epochs on VGGSound-GZSL$^{\textit{cls}}$ and ActivityNet-GZSL$^{\textit{cls}}$ and for 20 epochs on UCF-GZSL$^{\textit{cls}}$.
+
+
+The training of our method is divided into two stages\cite{1,5,7}. In the first stage, the model is trained on the training set. The validation set, consisting of $\text{Val}_\text{U}$ and $\text{Val}_\text{S}$, is used to determine the model parameters, such as the calibrated stacking parameter and the optimal number of epochs, which is determined on the basis of the HM score. In the second stage, the model is trained again using the parameters determined in the first stage; however, in this step, the model is trained on the union set $\{\text{train} \cup \text{Val}_\text{S} \cup \text{Val}_\text{U}\}$. Finally, the model trained in the second stage is applied to the test set. The other experimental settings follow those of ClipClap-GZSL\cite{2}.
+
+
+\subsubsection{Evaluation metrics}
+We evaluate the performance of the model on seen and unseen classes using the S, U, HM, and ZSL metrics. Specifically, we report the average accuracy for seen classes (S) and unseen classes (U). In the context of GZSL, the model tends to exhibit an inherent bias toward seen categories, which often results in higher accuracy for seen classes. To balance S and U, we utilize the harmonic mean (HM) of S and U as the evaluation metric for the GZSL task. For ZSL, only classes from the unseen test class subset are selected as prediction results. Thus, in this task, only the subset of test samples from unseen classes is used in the performance evaluation.
+
+\begin{table*}[!t]  % table* = 跨双栏，解决宽度溢出
+  \centering
+  \caption{Dataset splits for \text{VGGSound-GZSL}$^{\textit{cls}}$, \text{UCF-GZSL}$^{\textit{cls}}$, and \text{ActivityNet-GZSL}$^{\textit{cls}}$.}
+  \label{tab:dataset_split}
+  % 核心：@{\hspace{2em}} 强制在First/Second stage之间增加2em间距，实现“分开”效果
+  \begin{tabular}{l c c c c c c @{\hspace{2em}} c c c}
+    \toprule[1pt]  % 顶部粗线，还原原图样式
+    \multirow{3}{*}{STAGE} & & & & \multicolumn{3}{c}{First stage} & \multicolumn{3}{c}{Second stage} \\
+    \cmidrule(lr){5-7} \cmidrule(lr){8-10}  % 分割First/Second stage的线条
+    & & & & Training & \multicolumn{2}{c}{Validation} & Training & \multicolumn{2}{c}{Test} \\
+    \cmidrule(lr){5-5} \cmidrule(lr){6-7} \cmidrule(lr){8-8} \cmidrule(lr){9-10}  % 分割子表头的线条
+    DATASET & C & $\text{C}_\text{S}$ & $\text{C}_\text{U}$ & $\text{Tr}_\text{S}$ & $\text{Val}_\text{S}$ & $\text{Val}_\text{U}$ & $\text{Tr}_\text{S}$ & $\text{Te}_\text{S}$ & $\text{Te}_\text{U}$ \\
+    \midrule[0.8pt]  % 表头与数据之间的中粗线
+    \text{UCF-GZSL}$^{\textit{cls}}$ & 51 & 30 & 21 & 30 & 30 & 12 & 42 & 42 & 9 \\
+    \text{VGGSound-GZSL}$^{\textit{cls}}$ & 276 & 138 & 138 & 138 & 138 & 69 & 207 & 207 & 69 \\
+    \text{ActivityNet-GZSL}$^{\textit{cls}}$ & 200 & 99 & 101 & 99 & 99 & 51 & 150 & 150 & 50 \\
+    \bottomrule[1pt]  % 底部粗线
+  \end{tabular}
+\end{table*}
+
+\newlength{\oldaboverulesep}
+\newlength{\oldbelowrulesep}
+\begin{table*}[!t]
+  \centering
+  \caption{Performance of our model compared to state-of-the-art methods for AVGZSL on the \text{VGGSound-GZSL}$^{\textit{cls}}$, \text{UCF-GZSL}$^{\textit{cls}}$, and \text{ActivityNet-GZSL}$^{\textit{cls}}$ datasets. The overall top results are indicated in \textbf{bold} and the second-best results are indicated in \underline{underline}.}
+  \label{tab:sota}
+  
+  \begin{tabular}{l cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Methods}} 
+    & \multicolumn{4}{c}{VGGSound-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{UCF-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{ActivityNet-GZSL$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    % 第一列：方法名正常，会议名缩小；数值列：加粗最高，下划线次高
+    DeViSE \cite{38} \,{\scriptsize \textbf{NeurIPS'13}} & \underline{36.22} & 1.07 & 2.08 & 5.59 & & 55.59 & 14.94 & 23.56 & 16.09 & & 3.45 & 8.53 & 4.91 & 8.53 \\
+    ALE \cite{39} \,{\scriptsize \textbf{T-PAMP'15}} & 0.28 & 5.48 & 0.53 & 5.48 & & 57.59 & 14.89 & 23.66 & 16.32 & & 2.63 & 7.87 & 3.94 & 7.90 \\
+    SJE \cite{40} \,{\scriptsize \textbf{CVPR'20}} & \textbf{48.33} & 1.10 & 2.15 & 4.06 & & 63.10 & 16.77 & 26.50 & 18.93 & & 4.61 & 7.04 & 5.57 & 7.08 \\
+    f-VAEGAN-D2 \cite{42} \,{\scriptsize \textbf{CVPR'19}} & 12.77 & 0.95 & 1.77 & 1.91 & & 17.29 & 8.47 & 11.37 & 11.11 & & 4.36 & 2.14 & 2.87 & 2.40 \\
+    APN \cite{41} \,{\scriptsize \textbf{IJCV'22}} & 7.48 & 3.88 & 5.11 & 4.49 & & 28.46 & 16.16 & 20.61 & 16.44 & & 9.84 & 5.76 & 7.27 & 6.34 \\
+    CJME \cite{3} \,{\scriptsize \textbf{WACV'20}} & 11.96 & 5.41 & 7.45 & 6.84 & & 48.18 & 17.68 & 25.87 & 20.46 & & 16.06 & 9.13 & 11.64 & 9.92 \\
+    AVGZSLNet \cite{4} \,{\scriptsize \textbf{WACV'21}} & 13.02 & 2.88 & 4.71 & 5.44 & & 56.26 & 34.37 & 42.67 & 35.66 & & 14.81 & 11.11 & 12.70 & 12.39 \\
+    AVCA \cite{1} \,{\scriptsize \textbf{CVPR'22}} & 32.47 & 6.81 & 11.26 & 8.16 & & 34.90 & 38.67 & 36.69 & 38.67 & & 24.04 & 19.88 & 21.76 & 20.88 \\
+    TCAF \cite{5} \,{\scriptsize \textbf{ECCV'22}} & 12.63 & 6.72 & 8.77 & 7.41 & & 67.14 & 40.83 & 50.78 & 44.64 & & 30.12 & 7.65 & 12.20 & 7.96 \\
+    AVFS \cite{6} \,{\scriptsize \textbf{IJCNN'23}} & 15.62 & 6.00 & 8.67 & 7.31 & & 54.57 & 36.94 & 44.06 & 41.55 & & 14.41 & 8.91 & 11.01 & 9.15 \\
+    Hyper-multiple \cite{7} \,{\scriptsize \textbf{ICCV'23}} & 21.99 & 8.12 & 11.87 & 8.47 & & 43.52 & 39.77 & 41.56 & 40.28 & & 20.52 & \underline{21.30} & 20.90 & \underline{22.18} \\
+    KDA \cite{9} \,{\scriptsize \textbf{ARXIV'23}} & 13.30 & 7.74 & 9.78 & 8.32 & & 75.88 & 42.97 & 54.84 & \underline{52.66} & & 37.55 & 10.25 & 17.95 & 11.85 \\
+    STFT\cite{43} \,{\scriptsize \textbf{TIP'24}} & 11.74 & 8.83 & 10.08 & 8.79 & & 61.42 & 43.81 & 51.14 & 49.74 & & 25.12 & 9.83 & 14.13 & 9.46 \\
+    ClipClap-GZSL \cite{2} \,{\scriptsize \textbf{CVPR'24}} & 27.59 & \underline{11.00} & \underline{15.73} & \underline{11.28} & & 78.20 & 42.57 & \underline{55.13} & 46.01 & & \textbf{44.89} & 19.42 & \underline{27.11} & 21.76 \\
+    MSTR \cite{14} \,{\scriptsize \textbf{Neurocomputing'25}} & 13.70 & 5.48 & 7.83 & 6.38 & & \textbf{86.32} & 19.97 & 32.43 & 23.57 & & 22.92 & 9.28 & 13.21 & 9.65 \\
+    MDST++ \cite{44} \,{\scriptsize \textbf{TCSVT'25}} & 12.21 & 8.38 & 9.94 & 10.32 & & 65.32 & \underline{44.79} & 53.14 & \textbf{55.22} & & 27.53 & 10.72 & 15.43 & 13.12 \\
+    SACMA \cite{45} \,{\scriptsize \textbf{Inf.Fusion'25}} & 13.42 & 6.00 & 8.29 & 6.46 & & 60.15 & 27.46 & 37.71 & 29.07 & & 17.12 & 7.32 & 10.25 & 7.52 \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{KA-GZSL} & 32.47 & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \underline{83.79} & \textbf{46.68} & \textbf{59.96} & 48.98 & & \underline{42.80} & \textbf{23.18} & \textbf{30.07} & \textbf{24.24}\\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+    
+  \end{tabular}
+\end{table*}
+
+
+\subsubsection{Comparison methods}
+We compare the proposed method with 5 classic ZSL methods and 13 audio–visual GZSL methods. The ZSL methods include DeViSE\cite{38}, ALE\cite{39}, SJE\cite{40}, APN\cite{41}, and f-VAEGAN-D2\cite{42}. Among them, DeViSE, ALE, SJE, and APN are discriminative zero-shot learning methods based on label embeddings and are typically used in image tasks to learn the compatibility between visual features and semantic embeddings. f-VAEGAN-D2 is a generative ZSL method that mitigates the missing sample problem by conditionally generating unseen class features. To adapt these models to the audio–visual task, the aforementioned ZSL baselines take both audio and visual features as inputs in our experiments rather than relying solely on a single visual feature.
+
+
+The audio–visual GZSL comparison methods include CJME\cite{3}, AVGZSLNet\cite{4}, AVCA\cite{1}, TCAF\cite{5}, AVFS\cite{6}, Hyper-multiple\cite{7}, KDA\cite{9}, STFT\cite{43}, ClipClap-GZSL\cite{2}, EZ-AVGZL\cite{12}, MSTR\cite{14}, MDST++\cite{44}, and SACMA\cite{45}. Specifically, CJME and AVGZSLNet achieve multimodal alignment through a shared embedding space, with AVGZSLNet further introducing cross-modal decoding and reconstruction mechanisms to strengthen the semantic constraints. AVCA and TCAF explicitly model cross-modal and temporal interactions on the basis of transformers or attention mechanisms. AVFS enhances unseen class features through generation and synthesis strategies and introduces contrastive learning to increase generalizability. Hyper-multiple introduces a hyperbolic geometry mechanism to characterize the hierarchical structure of the categories and enhance cross-modal alignment. KDA uses large language models to generate fine-grained semantic descriptions and combines distribution alignment strategies to increase the separability of unseen classes. STFT, MSTR, and MDST++ are audio–visual zero-shot learning approaches that combine SNNs with transformers to better capture spatiotemporal dynamics and sparse motion information. ClipClap-GZSL and EZ-AVGZL utilize the features of pretrained large models and audio–visual–text contrastive learning mechanisms to efficiently align features. SACMA jointly models intramodal and intermodal associations through self-attention and cross-modal attention mechanisms and combines a compositional contrastive loss with a cosine similarity loss to increase the consistency between the audio–visual embeddings and textual representations.
+
+
+\begin{table*}[!t]
+  \centering
+  \caption{Influence of KAS, AVCE, and AKG in KA-GZSL.}
+  \label{tab:component_ablation}
+  \begin{tabular}{l cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Model}}
+    & \multicolumn{4}{c}{VGGSound-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{UCF-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{ActivityNet-GZSL$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    W/o \textbf{K}nowledge-\textbf{A}ugmented \textbf{S}emantics & 28.67 & 9.39 & 14.15 & 8.66 & & 73.82 & 38.24 & 50.38 & \textbf{52.93} & & 38.13 & 19.79 & 26.06 & 22.42 \\
+    W/o \textbf{A}udio--\textbf{V}isual \textbf{C}ontext \textbf{E}ncoder & 18.11 & 7.25 & 10.35 & 7.94 & & 50.64 & 16.37 & 24.74 & 20.94 & & 19.65 & 11.26 & 14.32 & 15.49 \\
+    W/o \textbf{A}ction \textbf{K}nowledge \textbf{G}raph & 15.27 & 6.15 & 8.77 & 8.53 & & 45.36 & 16.53 & 24.23 & 15.38 & & 23.65 & 18.37 & 20.68 & 12.12 \\
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{KA-GZSL} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & 48.98 & & \textbf{42.80} & \textbf{23.18} & \textbf{30.07} & \textbf{24.24} \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+  \centering
+  \caption{Influence of different prompts in KAS.}
+  \label{tab:prompt}
+  \begin{tabular}{l cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Prompt}} 
+    & \multicolumn{4}{c}{VGGSound-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{UCF-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{ActivityNet-GZSL$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    None & 11.35 & 5.66 & 7.55 & 6.98 & & 50.26 & 35.83 & 41.84 & 42.16 & & 28.73 & 16.22 & 20.73 & 19.51 \\
+    a photo of a person doing \{class label\} & 19.20 & 9.98 & 13.13 & 9.11 & & 79.88 & 44.86 & 57.45 & \textbf{49.23} & & \textbf{45.77} & 20.26 & 28.09 & 22.55 \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{a photo of a... +“class explanation”} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & 48.98 & & 42.80 & \textbf{23.18} & \textbf{30.07} & \textbf{24.24} \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+  \centering
+  \caption{Influence of different text encoders on knowledge graph construction.}
+  \label{tab:text_encoder}
+  \begin{tabular}{c cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Text Encoder}} 
+    & \multicolumn{4}{c}{VGGSound-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{UCF-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{ActivityNet-GZSL$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    CLIP & 30.55 & 9.71 & 14.74 & 10.62 & & 79.82 & 34.67 & 48.34 & 39.81 & & 40.63 & 22.40 & 28.88 & 23.86 \\
+    CLAP & 21.34 & 9.52 & 13.17 & 9.73 & & 59.77 & 42.46 & 49.65 & 40.36 & & 37.04 & 15.95 & 22.30 & 19.54 \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{Both} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & \textbf{48.98} & & \textbf{42.80} & \textbf{23.18} & \textbf{30.07} & \textbf{24.24} \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+\end{table*}
+
+
+\subsection{Quantitative analysis}
+Table \ref{tab:sota} summarizes the results of the performance comparison between the proposed KA-GZSL framework and other state-of-the-art audio–visual zero-shot learning methods on three benchmark datasets: VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$. KA-GZSL outperforms existing methods in terms of most key metrics, achieving state-of-the-art performance levels.
+
+
+On all three datasets, the GZSL performance (HM) of KA-GZSL surpasses that of all the baseline methods. Specifically, on UCF-GZSL$^{\textit{cls}}$, KA-GZSL achieves an HM score of 59.96\%, which is 4.83\% higher than the 55.13\% score of the second-best baseline method, ClipClap-GZSL. Similarly, on ActivityNet-GZSL$^{\textit{cls}}$, KA-GZSL achieves an HM score of 30.07\%, whereas ClipClap-GZSL yields an HM score of 27.11\%. On VGGSound-GZSL$^{\textit{cls}}$, the difference in the GZSL performance of the different models is small; the HM scores of KA-GZSL and ClipClap-GZSL are 16.74\% and 15.73\%, respectively. With respect to the ZSL performance of the different models, KA-GZSL consistently outperforms the other models across all three datasets. On ActivityNet-GZSL$^{\textit{cls}}$, the ZSL score of KA-GZSL reaches 24.24\%, which is 2.06 percentage points higher than that of Hyper-multiple (22.18\%). On VGGSound-GZSL$^{\textit{cls}}$, the difference in the ZSL performance of the methods is small, with KA-GZSL obtaining a ZSL score of 12.16\%, outperforming ClipClap-GZSL (11.28\%) by only 0.88\%. On UCF-GZSL$^{\textit{cls}}$, KA-GZSL achieves a ZSL score of 48.98\%, which approaches the optimal level, whereas MDST++ achieves a ZSL score of 55.22\%.
+
+
+KA-GZSL has clear advantages in terms of both the HM and ZSL scores, primarily because the knowledge graph constructed from visual actions and audio information serves as a guide for the model, thereby enabling more precise semantic alignment and feature consistency across different modalities. Furthermore, the model performs better on the UCF-GZSL$^{\textit{cls}}$ dataset than on the VGGSound-GZSL$^{\textit{cls}}$ and ActivityNet-GZSL$^{\textit{cls}}$ datasets. This difference is partly attributed to the relatively small scale and focused scenarios included in the UCF-GZSL$^{\textit{cls}}$ dataset, which make it easier for the model to capture key audio–visual features. In contrast, the VGGSound-GZSL$^{\textit{cls}}$ and ActivityNet-GZSL$^{\textit{cls}}$ datasets contain more categories, more complex scenes, and stronger intraclass variances, as well as more pronounced background noise and weaker audio‒visual correlations, thus increasing the difficulty of the task. Nevertheless, KA-GZSL still achieves optimal results on these two challenging datasets.
+
+
+\subsection{Ablation analysis}
+\subsubsection{Influence of KAS, AVCE, and AKG in KA-GZSL}
+Table \ref{tab:component_ablation} validates the effectiveness of KAS, AVCE, and AKG in KA-GZSL. It can be observed that removing any of these components reduces the S, U, and HM scores on all three datasets, confirming that each component contributes to balanced GZSL performance. Specifically, AVCE and AKG are the most critical components. Removing AVCE decreases the HM score by 6.39\%, 35.22\%, and 15.75\% on VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$, respectively, whereas removing AKG results in corresponding decreases of 7.97\%, 35.73\%, and 9.39\%. AVCE integrates modality-specific features with modality-shared temporal context, thereby mitigating modality interference and semantic loss, while AKG captures structured associations between global action semantics and audio--visual temporal features through graph propagation and cross-graph knowledge transfer. KAS further enriches ambiguous class labels with fine-grained visual, motion, and auditory descriptions; removing it decreases the HM score by 2.59\%, 9.58\%, and 4.01\% on the three datasets, respectively. Although removing KAS increases the standalone ZSL score on UCF-GZSL$^{\textit{cls}}$ from 48.98\% to 52.93\%, the complete model achieves the highest HM score on every dataset, indicating that the three components are complementary in balancing the recognition of seen and unseen classes.
+
+\subsubsection{Influence of different prompts in KAS}
+As shown in Table \ref{tab:prompt}, when the “class explanation” is integrated into the base template “a photo of a person doing {class label}”, the HM and ZSL scores of the model generally increase across all the datasets. Specifically, on the diverse and complex VGGSound-GZSL$^{\textit{cls}}$ dataset, the introduction of class explanations significantly increases the HM metric from 13.13\% to 16.74\%; on the ActivityNet-GZSL$^{\textit{cls}}$ dataset, the HM metric also increases from 28.09\% to 30.07\%. The analysis of different prompt construction strategies on the three benchmark datasets reveals that introducing detailed class explanations plays a significant role in enhancing model performance.
+
+\begin{table*}[!t]
+  \centering
+  \caption{Influence of weighting coefficients $\alpha$, $\beta$, and $\varphi$ in the loss function.}
+  \label{tab:loss_coeff}
+  \begin{tabular}{ccc cccc c cccc c cccc}
+    \toprule[2pt]
+    \multicolumn{3}{c}{\multirow{2}{*}{\textbf{Factor}}} 
+    & \multicolumn{4}{c}{VGGSound-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{UCF-GZSL$^{\textit{cls}}$} & & \multicolumn{4}{c}{ActivityNet-GZSL$^{\textit{cls}}$} \\
+    \cmidrule(lr){4-7} \cmidrule(lr){9-12} \cmidrule(lr){14-17}
+    $\alpha$ & $\beta$ & $\varphi$ & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    $\times$ & $\times$ & $\times$ & 23.53 & 5.68 & 9.15 & 6.94 & & 56.38 & 30.45 & 39.54 & 25.68 & & 27.04 & 12.73 & 17.31 & 15.64 \\
+    $\times$ & $\checkmark$ & $\checkmark$ & 24.72 & 6.86 & 10.74 & 7.55 & & 69.57 & 39.72 & 50.57 & 38.98 & & 31.29 & 18.94 & 23.60 & 17.44 \\
+    $\checkmark$ & $\times$ & $\checkmark$ & 28.55 & 7.27 & 11.59 & 9.13 & & 74.94 & \textbf{49.92} & 59.92 & 42.64 & & 35.71 & 17.59 & 23.57 & 20.43 \\
+    $\checkmark$ & $\checkmark$ & $\times$ & 28.93 & 6.38 & 10.45 & 8.97 & & 68.45 & 42.98 & 52.80 & 41.75 & & 40.85 & 20.67 & 27.45 & \textbf{24.76} \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{$\checkmark$} & \textbf{$\checkmark$} & \textbf{$\checkmark$} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \textbf{83.79} & 46.68 & \textbf{59.96} & \textbf{48.98} & & \textbf{42.80} & \textbf{23.18} & \textbf{30.07} & 24.24 \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+  \par\vspace{\dblfloatsep}
+  \caption{Influence of different training losses}
+  \label{tab:loss_ablation}
+  \begin{tabular}{c cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Loss}} 
+    & \multicolumn{4}{c}{\textbf{VGGSound-GZSL}$^{\textit{cls}}$} & & \multicolumn{4}{c}{\textbf{UCF-GZSL}$^{\textit{cls}}$} & & \multicolumn{4}{c}{\textbf{ActivityNet-GZSL}$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    w/o $L_{\mathrm{tri}}$ & 6.23 & 7.98 & 7.00 & 7.95 & & 20.23 & 15.23 & 17.38 & 18.14 & & 9.31 & 7.45 & 8.28 & 14.95 \\
+    w/o $L_{\mathrm{proj}}$ & 16.42 & 6.24 & 9.04 & \textbf{12.77} & & 65.72 & 19.49 & 30.06 & 25.48 & & 19.65 & 11.26 & 14.32 & 15.49 \\
+    w/o $L_{\mathrm{rec}}$ & 19.54 & 6.98 & 10.29 & 7.32 & & 69.54 & 23.58 & 35.22 & 23.96 & & 26.12 & 16.55 & 20.26 & 12.97 \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{$L_{\mathrm{total}}$} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & 12.16 & & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & \textbf{48.98} & & \textbf{42.80} & \textbf{23.18} & \textbf{30.07} & \textbf{24.24} \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+\end{table*}
+
+\begin{table*}[!t]
+  \centering
+  \caption{Influence of different modalities}
+  \label{tab:modality}
+  \begin{tabular}{c cccc c cccc c cccc}
+    \toprule[2pt]
+    \multirow{2}{*}{\textbf{Modality}} 
+    & \multicolumn{4}{c}{\textbf{VGGSound-GZSL}$^{\textit{cls}}$} & & \multicolumn{4}{c}{\textbf{UCF-GZSL}$^{\textit{cls}}$} & & \multicolumn{4}{c}{\textbf{ActivityNet-GZSL}$^{\textit{cls}}$} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){7-10} \cmidrule(lr){12-15}
+    & S & U & HM & ZSL & & S & U & HM & ZSL & & S & U & HM & ZSL \\
+    \midrule[1pt]
+    Audio & 19.26 & 10.28 & 13.41 & 9.86 & & 44.17 & 42.37 & 43.25 & 46.27 & & 12.36 & 8.33 & 9.95 & 7.67 \\
+    Visual & 17.23 & 7.56 & 10.51 & 7.66 & & 59.66 & 45.16 & 51.41 & 47.39 & & 37.14 & \textbf{24.83} & 29.76 & 23.94 \\
+    
+    \noalign{\global\setlength{\oldaboverulesep}{\aboverulesep}}
+    \noalign{\global\setlength{\oldbelowrulesep}{\belowrulesep}}
+    \noalign{\global\setlength{\aboverulesep}{0pt}}
+    \noalign{\global\setlength{\belowrulesep}{1.5pt}}
+    \midrule[1pt]
+    \rowcolor{gray!25}
+    \textbf{Both} & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & \textbf{48.98} & & \textbf{42.80} & 23.18 & \textbf{30.07} & \textbf{24.24} \\
+    \bottomrule[2pt]
+    \noalign{\global\setlength{\aboverulesep}{\oldaboverulesep}}
+    \noalign{\global\setlength{\belowrulesep}{\oldbelowrulesep}}
+  \end{tabular}
+\end{table*}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figure/tsne.png}
+    \caption{The t-SNE visualization results of our method on the three datasets (VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$). Specifically, the figure presents the audio input features, visual input features, and joint audio–visual embeddings learned by our model for the six categories. The distributions of the raw audio features and raw visual features in the feature space are relatively dispersed, and the class boundaries are insufficiently clear; in contrast, the joint audio–visual embeddings learned by the KA-GZSL model exhibit more compact and clearly separable clusters. These results further validate the effectiveness of the proposed method in cross-modal semantic modeling and knowledge transfer for unseen classes, indicating that our model can accurately map the input audio–visual samples to the correct categories in the semantic space.}
+    \label{fig:tsne}
+\end{figure*}
+
+\subsubsection{Influence of different text encoders on the construction of the knowledge graph}
+The proposed framework uses the CLIP and CLAP text encoders to encode the text descriptions generated by the knowledge-augmented semantics module and thus construct the relational global action knowledge graph and relational global audio knowledge graph, respectively. To verify the roles of the different text encoders in the construction of the knowledge graph, we consider three schemes: using only the CLIP text encoder, using only the CLAP text encoder, and using both text encoders simultaneously. We conduct comparative experiments using these schemes, and the experimental results are shown in Table \ref{tab:text_encoder}. When only a single text encoder is used, the model can extract class priors from only a unimodal semantic space, leading to significant performance variations on different datasets; in contrast, when both the CLIP and CLAP text encoders are used simultaneously, the model can construct more comprehensive prior knowledge graphs on the basis of both the visual and audio semantics, with complementarity realized through the relational global action knowledge graph and relational global audio knowledge graph. On the VGGSound-GZSL$^{\textit{cls}}$ dataset, the HM of our method (Both) reaches 16.74\%, outperforming the HM scores of 14.74\% when only the CLIP model is used and 13.17\% when only the CLAP model is used. Additionally, on the UCF-GZSL$^{\textit{cls}}$ dataset, the HM of our method (Both) reaches 59.96\%, which is significantly greater than the HM scores of 48.34\% when only the CLIP model is used and 49.65\% when only the CLAP model is used. Finally, on the ActivityNet-GZSL$^{\textit{cls}}$ dataset, our method (Both) achieves the highest HM score of 30.07\%. The ZSL metrics also exhibit a consistent trend. The above results demonstrate that the joint use of the CLIP and CLAP text encoders can provide richer and more complementary semantic priors for the two types of relational knowledge graphs.
+
+
+\subsubsection{Influence of the weighting coefficients $\alpha$, $\beta$, and $\varphi$ in the loss function}
+As shown in Table \ref{tab:loss_coeff}, we first present the case without introducing the joint constraints of the weighting coefficients; then, we conduct comparative experiments by individually removing one of the three weighting coefficients from the overall loss function in Eq. \eqref{eq:total_loss}. On the basis of the previous settings, the coefficient  adjusts the weight of the joint triplet loss , the coefficient  controls the weight of the projection loss , and the coefficient  regulates the weight of the reconstruction loss . The experimental results show that the joint optimization of the coefficients , , and  critically influences model performance. When all the weighted synergistic constraints are retained, the model achieves the best performance. In this scenario, on UCF-GZSL$^{\textit{cls}}$, the HM score reaches 59.96\%; on ActivityNet-GZSL$^{\textit{cls}}$, the HM score reaches 30.07\%; and on VGGSound-GZSL$^{\textit{cls}}$, the HM score at 16.74\%. Among these coefficients,  contributes most significantly to the model's baseline discriminative performance. Removing  individually results in a substantial decrease in the HM score, with a 9.39 percentage point decrease in the HM on the UCF-GZSL$^{\textit{cls}}$ dataset. Moreover, individually removing  results in a sharp decrease of 6.50 percentage points in the HM score on ActivityNet-GZSL$^{\textit{cls}}$, and individually removing  results in a 6.29 percentage point decrease in the HM score on VGGSound-GZSL$^{\textit{cls}}$. This joint weighting mechanism achieves three key effects:  ensures that the audio‒visual hybrid embeddings can successfully distinguish positive and negative relationships among cross-modal sample pairs, thereby achieving compact intraclass clustering and interclass decoupling;  minimizes the distance between the audio‒visual features and the textual semantic features of the graph actions; and  ensures that the original data distribution characteristics of the features are not disrupted. This mechanism achieves the optimal balance in the classification of both seen and unseen classes, fully validating the rationality of the weighting design for our overall loss function.
+
+
+\subsubsection{Influence of different training losses}
+We also investigate the roles of various loss functions, as shown in Table \ref{tab:loss_ablation}. A comprehensive comparison of the experimental results reveals that using the complete loss function results in the best HM and ZSL scores on the VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$ datasets. Specifically, the joint triplet loss  is crucial to ensure the discriminative ability of the model. Taking the UCF-GZSL$^{\textit{cls}}$ dataset as an example, excluding the loss function  during model training results in the HM and ZSL scores decreasing to 17.38\% and 18.14\%, respectively, which are far below the 59.96\% and 48.98\% values achieved by the complete model ($L_{\mathrm{total}}$). This trend is equally evident with the VGGSound-GZSL$^{\textit{cls}}$ dataset, as removing  results in the HM score decreasing from 16.74\% to 7.00\%. Furthermore, the projection loss  and the reconstruction loss  play key roles in maintaining the feature distribution and semantic consistency, respectively. On the ActivityNet-GZSL$^{\textit{cls}}$ dataset, when  and  are removed, the HM score decreases to 14.32\% and 20.26\%, respectively, which are significantly lower than the 30.07\% score of the complete model. These results strongly validate that the joint triplet loss, projection loss, and reconstruction loss all play indispensable roles in the model training process.
+
+
+% \begin{table*}[htbp]  % table* = 跨双栏，彻底解决多列溢出问题
+%   \centering
+%   \caption{Influence of weighting coefficients $\alpha$, $\beta$, and $\varphi$ in the loss function.}
+%   \label{tab:loss_coeff}
+%   % 核心：@{\hspace{2em}} 在三个数据集之间强制增加间距，实现“分开”效果
+%   \begin{tabular}{ccc *{4}{c} @{\hspace{2em}} *{4}{c} @{\hspace{2em}} *{4}{c}}
+%     \toprule[1pt]  % 顶部粗线，还原原图样式
+%     \multirow{2}{*}{Factor} & & & \multicolumn{4}{c}{\text{VGGSound-GZSL}$^{\textit{cls}}$} & \multicolumn{4}{c}{\text{UCF-GZSL}$^{\textit{cls}}$} & \multicolumn{4}{c}{\text{ActivityNet-GZSL}$^{\textit{cls}}$} \\
+%     \cmidrule{4-7} \cmidrule{8-11} \cmidrule{12-15}  % 分割三个数据集的表头
+%     $\alpha$ & $\beta$ & $\varphi$ & S & U & HM & ZSL & S & U & HM & ZSL & S & U & HM & ZSL \\
+%     \midrule[0.8pt]  % 表头与数据之间的中粗线
+%     $\times$ & $\times$ & $\times$ & 23.53 & 5.68 & 9.15 & 6.94 & 56.38 & 30.45 & 39.54 & 25.68 & 27.04 & 12.73 & 17.31 & 15.64 \\
+%     $\times$ & $\checkmark$ & $\checkmark$ & 24.72 & 6.86 & 10.74 & 7.55 & 69.57 & 39.72 & 50.57 & 38.98 & 31.29 & 18.94 & 23.60 & 17.44 \\
+%     $\checkmark$ & $\times$ & $\checkmark$ & 28.55 & 7.27 & 11.59 & 9.13 & 74.94 & \textbf{49.92} & 59.92 & 42.64 & 35.71 & 17.59 & 23.57 & 20.43 \\
+%     $\checkmark$ & $\checkmark$ & $\times$ & 28.93 & 6.38 & 10.45 & 8.97 & 68.45 & 42.98 & 52.80 & 41.75 & 40.85 & 20.67 & 27.45 & \textbf{24.76} \\
+%     $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{32.47} & \textbf{11.28} & \textbf{16.74} & \textbf{12.16} & \textbf{83.79} & \textbf{46.68} & \textbf{59.96} & \textbf{48.98} & \textbf{42.80} & \textbf{23.18} & \textbf{30.07} & \textbf{24.24} \\
+%     \bottomrule[1pt]  % 底部粗线，还原原图样式
+%   \end{tabular}
+% \end{table*}
+% -------------------- 表1：损失系数分析 --------------------
+
+\subsubsection{Influence of different modalities}
+The results in Table \ref{tab:modality} demonstrate the significant advantages of using multimodal input data over unimodal inputs. To verify the effectiveness of the synergistic audio‒visual information, we tested the performance of models using only audio input features and their corresponding text embeddings (Audio), only visual input features and their corresponding text embeddings (Visual), and both inputs simultaneously (Both). On the VGGSound-GZSL$^{\textit{cls}}$ dataset, the HM and ZSL scores of the model using only the audio modality (13.41\% and 9.86\%, respectively) are significantly higher than those of the model using only the visual modality (10.51\% and 7.66\%, respectively). These results are highly consistent with the characteristics of the VGGSound-GZSL$^{\textit{cls}}$ dataset, which was specifically constructed to contain strongly correlated audio information, indicating that auditory cues play important roles in class discrimination in this scenario. In contrast, on the UCF-GZSL$^{\textit{cls}}$ and ActivityNet-GZSL$^{\textit{cls}}$ datasets, which are dominated by visual action features, the model using only the visual modality has an overwhelming advantage. For instance, on ActivityNet-GZSL$^{\textit{cls}}$, the HM score of the model using only visual inputs is as high as 29.76\%, far exceeding the 9.95\% HM score of the model using only audio inputs. However, for both audio-dominated and vision-dominated datasets, our complete model (both) achieves the best overall performance by effectively fusing the two modalities. On the UCF-GZSL$^{\textit{cls}}$ dataset, the HM score of the bimodal input model reaches 59.96\%, representing an improvement of 8.55\% over the visual unimodality model (51.41\%). Overall, the joint use of audio and visual modalities as inputs addresses the information deficiencies of single-modal models; thus, the joint input model achieves the best performance on all three datasets.
+
+
+\subsection{Qualitative analysis}
+In this section, the performance of the KA-GZSL model is further evaluated through visualization experiments. The t-SNE\cite{46} dimensionality reduction technique is used to conduct a comparative analysis of the model inputs and outputs, thereby verifying the effectiveness of the KA-GZSL model from the perspective of the feature distribution.
+
+
+The t-SNE visualization results for the audio input features (left), visual input features (center), and the output embeddings of the KA-GZSL method (right) for six classes in the VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$ datasets are shown in Fig. \ref{fig:tsne}. The t-SNE visualization of the audio and visual input features and the corresponding audio‒visual embedding features across the six categories reveals that the raw audio and visual input features are relatively scattered, whereas the audio‒visual embedding features learned by the KA-GZSL model are clustered. In addition, the label embeddings for all the categories are located within the corresponding audio–visual clusters, further validating the good alignment between the learned audio–visual embeddings and the corresponding textual label embeddings. These results fully prove that the KA-GZSL method can effectively assign audio–visual input features to the correct categories.
+
+
+\section{Conclusion}
+In this paper, we propose a KA-GZSL framework to address the issues of semantic ambiguity in class names, weak audio–visual correlations, and difficulties in deep cross-modal alignment in audio–visual generalized zero-shot learning. Specifically, we first utilize large language models to perform fine-grained semantic expansion on the class labels, thereby enhancing the model’s semantic representation ability for unseen classes. Second, we construct a relational global action knowledge graph and a relational global audio knowledge graph and structurally inject external prior knowledge into the audio–visual temporal features through the action knowledge graph module to explicitly model the latent associations among audio, action, and visual features. Furthermore, we design an audio–visual context encoder to reduce the differences in the distributions of features of different modalities in the shared space while fusing modality-specific information with modality-shared information. Additionally, we combine the joint triplet loss, projection loss, and reconstruction loss to achieve cross-modal consistency constraints. The experimental results demonstrate that the proposed method achieves outstanding performance on the three benchmark datasets (VGGSound-GZSL$^{\textit{cls}}$, UCF-GZSL$^{\textit{cls}}$, and ActivityNet-GZSL$^{\textit{cls}}$) and validate the method's effective knowledge transfer capability for unseen classes in generalized zero-shot scenarios. Future work will focus on two main directions: First, more lightweight and robust knowledge enhancement and cross-modal interaction mechanisms should be explored to reduce model complexity and increase training efficiency; second, this method should be extended to more open-ended and complex real-world application scenarios to further enhance its practical value in actual multimodal tasks.
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{sec/references}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/wh.jpg}}]{Hu Wang}
+entered Chengdu University of Information Technology in 2019 and obtained a Bachelor of Engineering degree from Chengdu University of Information Technology in 2023.  In August 2024, he enrolled in the State Key Laboratory of Public Big Data, a jointly constructed laboratory by the province and the ministry, at Guizhou University for postgraduate studies.  His current research direction focuses on zero-shot Learning, audio–visual Learning.\end{IEEEbiography}
+\vspace{-3em}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/yj.jpg}}]{Jing Yang}
+(Member, IEEE) received the PhD degree in mechanical and electronic engineering from Guizhou University, in 2020. From August 2018 to September 2019, he was awarded a scholarship by the China Scholarship Council (CSC) under the State Scholarship Fund to pursue his study with Oklahoma State University, as a Joint Ph.D. Student with the school of Computer Science and Technology, where he joined the Guoliang Fan’s Group. From October 2022 to October 2023, he was a visiting scholar studying in the team of Professor Guo Minyi (IEEE Fellow) from Shanghai Jiao Tong University. He is currently an assistant professor with the State Key Laboratory of Public Big Data, Guizhou University, China. 
+His research interests include high performance computing, task scheduling in various architectures and Open domain visual learning. He has published more than 50 peer-reviewed papers in the related area, including well-archived international journals such as IEEE Transactions on Circuits and Systems for Video Technology, IEEE Transactions on Green Communications and Networking, IEEE Transactions on Intelligent transportation systems, and IEEE Internet of Things Journal. He serves more than 20 prestigious international journals and conferences, such as IEEE\ TC, IEEE\ TMC, IEEE\ TI, IEEE\ TIM, IEEE\ TSC, IEEE\ TSM, IEEE\ TAI, IEEE\ TASE, IEEE\ TOJ.\end{IEEEbiography}
+% \vspace{-4em}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/rxl.png}}]{Xiaoli Ruan}
+ received the PhD degree in information and communication engineering from Yunnan University, in 2021. Participating in the "Jiaxiu Zhiguang" Visiting Scholar Program at Zhejiang University from September 2024 to June 2025. She is currently a lecturer with the State Key Laboratory of Public Big Data, Guizhou University, China. Her research interests include Artificial Intelligence and Multimodal Big Data Fusion. She has published more than 20 peer-reviewed papers in the related area, including well-archived international journals such as IEEE Transactions on Geoscience and Remote Sensing, Knowledge-Based Systems, and IEEE Internet of Things Journal. 
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/cyl.jpg}}]{Yuling Chen}
+received her BS from Taishan University, Taian, PR China, in 2006; MS from Guizhou
+University, Guiyang, PR China, in 2009; Ph.D.
+from Guizhou University, Guiyang, PR China, in
+2021. She is now a professor at the State Key
+Laboratory of Public Big Data, Guizhou University,
+Guiyang, PR China. Her recent research interests
+include federated learning, blockchain, cryptography
+and information safety. received the M.E degrees in
+the College of Computer Science and Technology
+from Guizhou University, China, in 2018 and 2021. Her research interests are cryptography, blockchain, information security and artifcial intelligence security.\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/yxr.jpg}}]{Xinru Yi}
+was admitted to Guizhou University in September 2023 to pursue a bachelor's degree in Mechanical Design, Manufacturing and Automation. She has been awarded the National Endeavor Scholarship, the National Second Prize in the China Robot and Artificial Intelligence Competition, and the Provincial Excellence Award in the Challenge Cup China National College Students' Entrepreneurship Competition. Her research interests include automatic control and machine learning.\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/lcj.jpg}}]{Chengjiang Li}
+ received the PhD degree in Condensed Matter Physics from the Department of Physics, University of Oxford, UK, in 2012. He obtained his Bachelor's degree in Microelectronics from the School of Physical Science and Technology, Sichuan University, China, in 2007. His research interests include Quantum Information, New Energy Materials, and Optoelectronic Devices. He has published more than 60 peer-reviewed papers indexed by SCI/EI in high-impact international journals, including Journal of Materials Chemistry A, Light: Science \& Applications, Science China Materials, Advanced Optical Materials, Optics Express, Applied Physics Letters, Journal of Applied Physics, and Nano Letters.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figure/gmy.jpg}}]{Minyi Guo}
+(Fellow, IEEE) received the BSc and ME
+ degrees in computer science from Nanjing University,
+ China, and the PhD degree in computer science from
+ the University of Tsukuba, Japan. Additionally, he is
+ the Department of Computer Science and Engineering director of the Embedded and Pervasive Computing Center, Shanghai Jiao Tong University. Before
+ joining SJTU,he had been a professor with the School
+ of Computer Science and Engineering, University of
+ Aizu, Japan. He received the national science fund for distinguished young scholars from NSFC in 2007. His present research interests include parallel/distributed computing, compiler optimizations, Big Data, and cloud computing. He has more than 400 publications in major journals and international conferences in these areas. He
+ received 7 best/highlight paper awards from international conferences including
+ ALSPOS 2017 and ICCD 2018. He is now editor-in-chief of IEEE Transactions
+ on Sustainable Computing, and on the editorial board of IEEE Transactions
+ on Parallel and Distributed Systems, IEEE Transactions on Cloud Computing,
+ and Journal of Parallel and Distributed Computing. He is the Zhiyuan chair
+ professor, and an ACM distinguished member.\end{IEEEbiography}
+
+ 
+\end{document}
