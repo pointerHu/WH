@@ -1,0 +1,43 @@
+name: DOCX related-work editing
+on:
+  push:
+    branches: [edit/related-work-docx-0917]
+    paths:
+      - '.github/workflows/docx-related-work-0917.yml'
+      - '.docx-edit-0917/**'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export original document for layout-preserving editing
+        run: |
+          python3 - <<'PY'
+          import pathlib, zipfile, hashlib, shutil, xml.etree.ElementTree as ET
+          p=pathlib.Path('论文方案/王虎-论文-0917.docx')
+          data=p.read_bytes()
+          sha=hashlib.sha1(('blob '+str(len(data))+'\0').encode()+data).hexdigest()
+          assert sha=='2029eb28619471a28770fa03295fe77165999db9', 'Original document changed; stop for review.'
+          out=pathlib.Path('docx-inspection'); out.mkdir()
+          shutil.copy2(p,out/'original.docx')
+          with zipfile.ZipFile(p) as z:
+              xml=z.read('word/document.xml')
+              (out/'document.xml').write_bytes(xml)
+              root=ET.fromstring(xml)
+              ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+              lines=[]
+              for i,para in enumerate(root.findall('.//w:body/w:p',ns)):
+                  text=''.join(para.itertext())
+                  lines.append(str(i)+'\t'+text)
+              (out/'paragraphs.txt').write_text('\n'.join(lines),encoding='utf-8')
+          print('SOURCE_BLOB_SHA='+sha)
+          print('SOURCE_BYTES='+str(len(data)))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docx-original-0917
+          path: docx-inspection/
+          retention-days: 1
