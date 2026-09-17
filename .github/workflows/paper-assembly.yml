@@ -1,0 +1,36 @@
+name: Paper assembly sources
+on:
+  push:
+    branches: [paper-assembly-20260917]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract source document structure
+        shell: python
+        run: |
+          import pathlib, zipfile, xml.etree.ElementTree as E, json
+          out=pathlib.Path('paper_sources'); out.mkdir()
+          names=['KA-GZAL中文.docx','王虎-理论部分-0908.docx','实验部分.md','引言与相关工作.md']
+          ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main','m':'http://schemas.openxmlformats.org/officeDocument/2006/math'}
+          for name in names:
+              source=pathlib.Path('论文方案')/name
+              (out/name).write_bytes(source.read_bytes())
+              if name.endswith('.docx'):
+                  with zipfile.ZipFile(source) as z:
+                      root=E.fromstring(z.read('word/document.xml'))
+                      lines=[]
+                      for p in root.findall('.//w:body/w:p',ns):
+                          text=''.join(t.text or '' for t in p.iter() if t.tag in ['{'+ns['w']+'}t','{'+ns['m']+'}t'])
+                          style=p.find('w:pPr/w:pStyle',ns)
+                          lines.append((style.attrib if style is not None else {},text))
+                      (out/(name+'.structure.json')).write_text(json.dumps(lines,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Prepared four source files and document structures.')
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paper-sources
+          path: paper_sources/
+          retention-days: 1
