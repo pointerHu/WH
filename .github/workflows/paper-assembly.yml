@@ -1,36 +1,68 @@
-name: Paper assembly sources
+name: Paper manuscript assembly
 on:
   push:
     branches: [paper-assembly-20260917]
+    paths:
+      - '.github/workflows/paper-assembly.yml'
+      - '.paper-assembly/**'
 permissions:
-  contents: read
+  contents: write
 jobs:
-  sources:
+  assemble:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Extract source document structure
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install document tools
+        run: |
+          python -m pip install python-docx==1.2.0 beautifulsoup4==4.14.3 lxml==6.1.1
+          curl --fail --location --retry 2 -o /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/3.1.11.1/pandoc-3.1.11.1-1-amd64.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          pandoc --version
+      - name: Assemble manuscript
+        run: |
+          python .paper-assembly/build_manuscript.py --sources 论文方案 --output paper_output/SGTG-AVGZSL_中文完整稿.docx --work paper_work
+      - name: Check against visually reviewed manuscript
         shell: python
         run: |
-          import pathlib, zipfile, xml.etree.ElementTree as E, json
-          out=pathlib.Path('paper_sources'); out.mkdir()
-          names=['KA-GZAL中文.docx','王虎-理论部分-0908.docx','实验部分.md','引言与相关工作.md']
-          ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main','m':'http://schemas.openxmlformats.org/officeDocument/2006/math'}
-          for name in names:
-              source=pathlib.Path('论文方案')/name
-              (out/name).write_bytes(source.read_bytes())
-              if name.endswith('.docx'):
-                  with zipfile.ZipFile(source) as z:
-                      root=E.fromstring(z.read('word/document.xml'))
-                      lines=[]
-                      for p in root.findall('.//w:body/w:p',ns):
-                          text=''.join(t.text or '' for t in p.iter() if t.tag in ['{'+ns['w']+'}t','{'+ns['m']+'}t'])
-                          style=p.find('w:pPr/w:pStyle',ns)
-                          lines.append((style.attrib if style is not None else {},text))
-                      (out/(name+'.structure.json')).write_text(json.dumps(lines,ensure_ascii=False,indent=2),encoding='utf-8')
-          print('Prepared four source files and document structures.')
+          import hashlib, pathlib, zipfile
+          p=pathlib.Path('paper_output/SGTG-AVGZSL_中文完整稿.docx')
+          h=hashlib.sha256()
+          with zipfile.ZipFile(p) as z:
+              for n in sorted(z.namelist()):
+                  h.update(n.encode()); h.update(b'\0'); h.update(z.read(n)); h.update(b'\0')
+          actual=h.hexdigest()
+          expected='aedc2dba81c0da62e3306f5f2263a17f3cfb1524c05390f81fa2e8253819b17c'
+          print('Package contents digest:',actual)
+          assert actual==expected, 'Manuscript differs from the visually checked file; do not publish.'
+      - name: Publish only new manuscript to main
+        run: |
+          git fetch origin main
+          git worktree add --detach publish origin/main
+          python - <<'PY'
+          import hashlib, json, pathlib, shutil
+          audit=json.loads(pathlib.Path('paper_work/assembly_check.json').read_text())
+          for name,expected in audit['source_hashes'].items():
+              p=pathlib.Path('publish/论文方案')/name
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==expected, 'Source changed on main: '+name
+          target=pathlib.Path('publish/论文方案/SGTG-AVGZSL_中文完整稿.docx')
+          assert not target.exists(), 'Refusing to overwrite an existing complete manuscript.'
+          shutil.copyfile('paper_output/SGTG-AVGZSL_中文完整稿.docx',target)
+          PY
+          git -C publish config user.name 'github-actions[bot]'
+          git -C publish config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C publish add -- '论文方案/SGTG-AVGZSL_中文完整稿.docx'
+          git -C publish commit -m '以0908理论稿为主整合引言与实验，新增SGTG-AVGZSL中文完整稿'
+          git -C publish push origin HEAD:main
+          git -C publish rev-parse HEAD | tee paper_output/published_commit.txt
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: paper-sources
-          path: paper_sources/
+          name: assembled-manuscript
+          path: |
+            paper_output/
+            paper_work/assembly_check.json
+            .paper-assembly/build_manuscript.py
           retention-days: 1
