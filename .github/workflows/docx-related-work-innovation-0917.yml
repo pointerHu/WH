@@ -1,0 +1,82 @@
+name: Revise related-work endings
+on:
+  push:
+    branches: [edit/related-work-innovation-0917]
+    paths: ['.github/workflows/docx-related-work-innovation-0917.yml']
+permissions:
+  contents: write
+jobs:
+  revise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update only the three concluding paragraphs
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from io import BytesIO
+          import copy, hashlib, json, re, zipfile
+          import xml.etree.ElementTree as ET
+          from xml.sax.saxutils import escape
+          p = Path('论文方案/王虎-论文-0917.docx')
+          data = p.read_bytes()
+          def blob(d):
+              return hashlib.sha1(b'blob ' + str(len(d)).encode() + b'\0' + d).hexdigest()
+          assert blob(data) == '3f9000a3966a8b7010a6417623ae21c4ce2ec8dc', 'Source DOCX changed; stop without editing.'
+          changes = [
+              ('因此，本文进一步关注类别语义如何引导局部判别证据的形成，而不局限于改进表示对齐与匹配函数。我们利用DSPO构建判别性语义参照，并将其与属性级描述共同用于SGTG的时序条件化，再以候选类别调节DMIF中的证据融合，使语义信息贯穿证据提取与识别决策。',
+               '然而，现有研究主要着力于增强视听—语义对应关系，对类别相关证据的连续时序分布及其与融合决策的联系尚未得到充分建模。与之不同，本文提出SGTG-AVGZSL，将候选类别语义同时用于时序证据定位与融合控制，使兼顾可分性与语义结构的类别原型不仅充当匹配参照，还主动参与局部证据的提取与组合。本文的关键区别在于，将“如何匹配已有表征”进一步推进为“如何形成支持候选类别的判别证据”，从而以类别条件化的证据建模连接语义迁移与视听识别，为未见类别提供有针对性的判别表示。'),
+              ('为使融合决策与类别相关的时序证据相适应，本文将选择性交互与时序证据提取相结合。DMIF对SGTG增强后的序列分别建模模态内与模态间关系，并保留未经关系重组的直接时序证据；随后结合样本表征与候选类别原型，对三路证据进行归一化加权。由此，融合策略不仅取决于输入样本，也取决于当前待判别的类别及其可用证据。',
+               '然而，限制交互范围或引入语义门控，并不能直接解决类别相关证据在关系建模中受到无关信息干扰的问题。为此，本文提出定位与融合协同的DMIF机制，在SGTG增强的证据序列上分别建模模态内与模态间关系，并保留未经关系重组的直接时序证据。区别于仅在特征通道或关系分支之间选择的策略，本文由样本与候选类别共同调节上述三路证据的贡献，使融合对象从一般模态特征转向支持当前类别的判别证据。该设计在利用跨模态互补信息的同时保留直接定位路径，使模型能够随候选类别调整对模态交互的依赖。'),
+              ('然而，问题条件化定位依赖逐样本给定的问句，其目标并非在已见与未见事件类别的联合空间中完成分类。为实现面向未见类别的时序证据提取，本文以候选类别的属性描述和判别性原型构建定位条件，将问题驱动的连续聚合转化为类别驱动的证据建模。SGTG输出保留时间结构的增强序列及直接证据摘要，并与后续解耦融合协同完成候选类别评分，而不依赖测试样本的问句或真实类别标签。',
+               '然而，问题条件化的高斯定位依赖逐样本给定的问句，不能直接满足AVGZSL在无问句、无未见类训练样本条件下的证据提取需求。与之不同，本文提出候选类别驱动的SGTG机制，以属性级描述条件化视听序列，再由判别性类别原型分别引导视觉与音频的连续高斯定位，自适应汇聚支持当前类别的局部证据。本文的关键推进在于，将逐样本查询下的软定位拓展为可随类别语义迁移的证据提取过程，使同一视频针对不同候选类别形成不同的时序证据与相容性评分，从而将连续时序定位直接纳入已见与未见类别的联合判别。'),
+          ]
+          with zipfile.ZipFile(BytesIO(data)) as src:
+              xml = src.read('word/document.xml').decode('utf-8')
+              updated = xml
+              for old, new in changes:
+                  needle = '<w:t>' + escape(old) + '</w:t>'
+                  assert updated.count(needle) == 1
+                  updated = updated.replace(needle, '<w:t>' + escape(new) + '</w:t>', 1)
+              restored = updated
+              for old, new in changes:
+                  restored = restored.replace('<w:t>' + escape(new) + '</w:t>', '<w:t>' + escape(old) + '</w:t>', 1)
+              assert restored == xml
+              ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+              a = ET.fromstring(xml).findall('w:body/w:p', ns)
+              b = ET.fromstring(updated).findall('w:body/w:p', ns)
+              assert len(a) == len(b)
+              changed = [i for i, (x, y) in enumerate(zip(a, b)) if ET.tostring(x) != ET.tostring(y)]
+              assert changed == [17, 21, 25]
+              assert re.findall(r'\[[0-9][0-9,，\-– ]*\]', xml) == re.findall(r'\[[0-9][0-9,，\-– ]*\]', updated)
+              output = BytesIO()
+              with zipfile.ZipFile(output, 'w') as dst:
+                  dst.comment = src.comment
+                  for info in src.infolist():
+                      content = updated.encode('utf-8') if info.filename == 'word/document.xml' else src.read(info.filename)
+                      dst.writestr(copy.copy(info), content)
+              result = output.getvalue()
+              with zipfile.ZipFile(BytesIO(result)) as dst:
+                  assert dst.testzip() is None
+                  assert dst.namelist() == src.namelist()
+                  assert [n for n in src.namelist() if src.read(n) != dst.read(n)] == ['word/document.xml']
+          p.write_bytes(result)
+          out = Path('docx-ending-review'); out.mkdir()
+          (out / p.name).write_bytes(result)
+          report = {'source_blob': blob(data), 'result_blob': blob(result), 'changed_paragraph_indices': changed, 'references_unchanged': True, 'only_three_text_nodes_changed': True}
+          (out / 'audit.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          PY
+      - name: Commit the document on the editing branch only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- '论文方案/王虎-论文-0917.docx'
+          git commit -m 'docs: strengthen innovation contrasts in three related-work endings'
+          git push origin 'HEAD:edit/related-work-innovation-0917'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docx-related-work-innovation-0917
+          path: docx-ending-review/
+          retention-days: 1
