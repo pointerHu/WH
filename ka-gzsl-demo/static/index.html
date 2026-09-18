@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="KA-GZSL 音视广义零样本视频分类论文演示：视频输入、特征提取、语义匹配与相对置信分数。">
+<title>KA-GZSL · 音视零样本识别</title><link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="#demo"><span class="brand-icon">K<span>•</span></span><div>KA-GZSL<small>RESEARCH DEMO</small></div></a>
+  <p class="nav-label">论文展示</p>
+  <nav><a class="active" href="#demo"><span>01</span>交互演示</a><a href="#method"><span>02</span>方法流程</a><a href="#about"><span>03</span>实验与说明</a></nav>
+  <div class="side-note"><span class="tiny-dot"></span> 本地 GPU 推理<p>视频仅在当前电脑处理。<br>不上传第三方识别服务。</p></div>
+  <div class="side-footer">AUDIO × VISION × LANGUAGE<br><span>研究原型 · 2026</span></div>
+</aside>
+<main id="demo">
+  <header><div class="breadcrumb">研究展示 <span>/</span> 音视广义零样本学习</div><div id="healthBadge" class="status"><i></i>检查运行环境</div></header>
+  <section class="hero"><div><div class="eyebrow">AUDIO-VISUAL GENERALIZED ZERO-SHOT LEARNING</div><h1>让声音与画面，<br><span>共同说出答案。</span></h1><p>上传一段视频，通过预训练音视编码器与 KA-GZSL 模型，<br class="desktop">将双模态信息映射到类别语义空间。</p></div><div class="hero-mark" aria-hidden="true"><span class="orbit orbit-a"></span><span class="orbit orbit-b"></span><span class="orbit orbit-c"></span><b>KA</b><em>SEMANTIC SPACE</em></div></section>
+  <section class="metric-strip" aria-label="模型信息"><div><small>分类模型</small><strong>KA-GZSL</strong></div><div><small>当前数据域</small><strong id="datasetName">UCF</strong></div><div><small>候选类别</small><strong id="classCount">—</strong></div><div><small>融合特征</small><strong>512 <span>+</span> 1024 <sup>D</sup></strong></div></section>
+  <div id="notice" class="notice" role="status">正在读取模型与编码器状态…</div>
+  <section class="workspace">
+    <article class="panel input-panel"><div class="panel-heading"><div><span class="section-number">01</span><h2>输入视频</h2></div><span class="pill">单视频推理</span></div>
+      <label id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="点击选择或拖入视频">
+        <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv,.webm" hidden>
+        <span class="upload-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/></svg></span>
+        <strong>点击选择，或拖入视频</strong><span>MP4 / AVI / MOV / MKV / WebM</span><small id="limits">含音轨 · 最长 120 秒 · 最大 100 MB</small>
+      </label>
+      <div id="videoWrap" class="video-wrap" hidden><video id="videoPreview" controls playsinline></video><button id="changeVideo" class="text-button" type="button">更换视频</button><div id="fileInfo"></div><p id="previewError" class="muted" hidden>浏览器可能不支持预览此格式，后端仍可尝试解码。</p></div>
+      <label class="field-label" for="modeSelect">候选类别设置</label><select id="modeSelect"><option value="gzsl">GZSL · 已见类 + 未见类</option><option value="zsl">ZSL · 仅未见类</option></select>
+      <button id="runButton" class="primary-button" disabled>开始视频分类 <span>↗</span></button>
+      <p class="microcopy">默认遵循仓库的单中间帧与 10 秒音频预处理。视频需包含有效音轨。</p>
+      <div class="sample-box"><button id="sampleButton" class="secondary-button" disabled>运行真实特征验证</button><p>使用已提取的 UCF 特征验证 KA-GZSL；不是上传视频识别，也不验证编码器。</p></div>
+    </article>
+    <article class="panel results-panel"><div class="panel-heading"><div><span class="section-number">02</span><h2>识别结果</h2></div><span id="resultTag" class="pill">等待输入</span></div>
+      <div id="emptyResult" class="empty-result"><div class="signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><h3>答案，从一次输入开始</h3><p>类别、相对置信分数与推理细节<br>会在模型实际完成计算后显示。</p></div>
+      <div id="progressWrap" hidden aria-live="polite"><div class="progress-copy"><strong id="progressMessage">正在提交任务</strong><span id="progressPercent">0%</span></div><div class="progress-track"><i id="progressBar"></i></div><p class="muted">进度来自后端处理阶段，不代表剩余耗时。</p></div>
+      <div id="errorBox" class="error-box" hidden role="alert"></div>
+      <div id="resultContent" hidden><div id="inputKind" class="result-kind"></div><div class="top-result"><div><p>最匹配类别</p><h3 id="predictedClass"></h3><span id="seenBadge" class="pill"></span></div><div class="confidence-number"><strong id="confidenceValue"></strong><small>相对置信分数</small></div></div><div class="rank-heading"><h3>Top-5 候选类别</h3><span>候选内归一化</span></div><div id="rankList"></div><p id="remainingScore" class="muted"></p><div class="result-meta"><div><small>推理耗时</small><strong id="elapsedValue"></strong></div><div><small>候选数量</small><strong id="candidatesValue"></strong></div><div><small>置信校准</small><strong>未校准</strong></div></div><div id="resultWarnings" class="result-warnings"></div><a id="downloadResult" class="download-link" href="#">下载完整结果 JSON ↓</a></div>
+    </article>
+  </section>
+  <section id="method" class="method-section"><div class="section-heading"><div><div class="eyebrow">FROM RAW VIDEO TO SEMANTICS</div><h2>一段视频，四个可追溯步骤</h2></div><span>冻结编码器 · 保留论文分类模型</span></div><div class="pipeline"><div><span>01 / INPUT</span><h3>视频解析</h3><p>中间帧与音轨分离<br>32 kHz 单声道 · 10 秒</p></div><b>→</b><div><span>02 / ENCODERS</span><h3>双模态特征</h3><p>CLIP ViT-B/32 · 512 维<br>WavCaps HTSAT-BERT · 1024 维</p></div><b>→</b><div><span>03 / KA-GZSL</span><h3>语义空间映射</h3><p>加载已训练模型权重<br>保持原网络与特征接口</p></div><b>→</b><div><span>04 / OUTPUT</span><h3>类别与分数</h3><p>语义原型距离 + 已见类偏置<br>输出类别及相对置信分数</p></div></div></section>
+  <section id="about" class="about-grid"><article><span class="eyebrow">REPRODUCIBILITY</span><h3>展示系统 ≠ 新的论文实验结论</h3><p>当前展示使用已复现的 UCF 模型。ActivityNet 与 VGGSound 不会使用短程测试权重冒充完整模型。每次计算保留模型校验值、特征维度、处理参数与结果记录。</p></article><article><span class="eyebrow">CONFIDENCE, NOT ACCURACY</span><h3>分数有边界，结论才可信</h3><p>百分比来自候选集合内的 softmax 分数，尚未经过独立验证集概率校准。它不是准确率，也不能证明输入属于候选类别；候选集合外的视频仍可能获得较高分数。</p></article></section>
+  <footer><span>KA-GZSL · 音视广义零样本视频分类演示</span><span>本地研究原型 / 非商用展示部署</span></footer>
+</main>
+<script src="/static/app.js" defer></script>
+</body></html>

@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv*/
+.vendor/
+config.local.json
+runtime/
+assets/**/*.pt
+assets/**/*.pth
+assets/**/*.ckpt
+assets/**/*.npz
+assets/**/*.safetensors
+.env
+*.log
+.DS_Store

@@ -1,0 +1,17 @@
+{
+  "model_python": ".venv-model/bin/python",
+  "ka_repo": ".vendor/KA-GZSL",
+  "bundle_dir": "assets/ucf",
+  "clip_weights": "assets/backbones/ViT-B-32.pt",
+  "wavcaps_weights": "assets/backbones/HTSAT_BERT_zero_shot.pt",
+  "ffmpeg": "ffmpeg",
+  "ffprobe": "ffprobe",
+  "device": "cuda",
+  "preprocess_profile": "legacy",
+  "temperature": 1.0,
+  "max_upload_mb": 100,
+  "max_duration_seconds": 120,
+  "job_timeout_seconds": 240,
+  "retention_hours": 24,
+  "max_jobs": 100
+}
