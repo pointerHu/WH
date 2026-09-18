@@ -1,0 +1,28 @@
+name: Read current abstract revision sources once
+on:
+  push:
+    branches: [manuscript-read-20260918]
+    paths: [.github/workflows/abstract-source-once.yml]
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 6727e1d89b44d99404a19e253b0317d6cde8c531
+          persist-credentials: false
+      - name: Collect only the two requested source files
+        run: |
+          mkdir -p abstract-sources
+          cp '论文方案/王虎-论文-0917.docx' abstract-sources/
+          cp '论文方案/KA-GZSL_TMM.tex' abstract-sources/
+          sha256sum abstract-sources/* > abstract-sources/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: abstract-revision-sources
+          path: abstract-sources/
+          retention-days: 1
+          if-no-files-found: error
