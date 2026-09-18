@@ -1,0 +1,30 @@
+{
+  "prediction": {"class_id": 77, "label": "ShavingBeard", "seen": false, "confidence": 0.22900277376174927, "distance": 4.347813606262207},
+  "top5": [
+    {"class_id": 77, "label": "ShavingBeard", "seen": false, "confidence": 0.22900277376174927, "distance": 4.347813606262207},
+    {"class_id": 61, "label": "PlayingFlute", "seen": false, "confidence": 0.18488709628582, "distance": 4.561802387237549},
+    {"class_id": 0, "label": "ApplyEyeMakeup", "seen": true, "confidence": 0.13858309388160706, "distance": 1.9167447090148926},
+    {"class_id": 64, "label": "PlayingSitar", "seen": false, "confidence": 0.13822440803050995, "distance": 4.8526692390441895},
+    {"class_id": 24, "label": "CuttingInKitchen", "seen": false, "confidence": 0.09065977483987808, "distance": 5.2744340896606445}
+  ],
+  "candidate_count": 48,
+  "mode": "gzsl",
+  "remaining_probability": 0.21864285320043564,
+  "confidence_kind": "relative_softmax_uncalibrated",
+  "temperature": 1.0,
+  "seen_bias": 2.933333158493042,
+  "seen_bias_source": "stage_A_validation_log; NOT fitted on test labels",
+  "latent_dimension": 64,
+  "dataset": "UCF",
+  "checkpoint_sha256": "d62d9a1c36d4215e0dfc7b5cb9ea63bb4bea59a045135492cb47f04d7b59e752",
+  "input_kind": "cached_feature_validation",
+  "metadata": {"reference_class_id": 0},
+  "timings": {"classifier_seconds": 1.9803373710001324},
+  "elapsed_seconds": 1.9831568090000928,
+  "feature_dimensions": {"audio": 1024, "video": 512, "text": 1536},
+  "warnings": [
+    "本次输入为已有 UCF 特征，不是新上传视频；不能用于证明视频提取链路已跑通。",
+    "置信分数是当前候选类别内的 softmax 相对分数，不等于准确率或经校准的正确概率。",
+    "候选类别之外的事件仍会被分配给某个候选类别；本系统不声称具备开放世界拒识能力。"
+  ]
+}

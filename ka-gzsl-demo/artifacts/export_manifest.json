@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "dataset": "UCF",
+  "upstream_commit": "085eae46195728fef3ad86b7a046528913f9bc39",
+  "model_source_sha256": "1cfbbac918c583354646f24001710e886153d37c0ca2c5306fbf9fb09773df7b",
+  "model_params": {
+    "dim_out": 64, "cross_entropy_loss": true, "lr": 7e-05, "optimizer": "adam",
+    "additional_dropout": 0.1, "reg_loss": true, "dropout_encoder": 0.3, "dropout_decoder": 0.1,
+    "encoder_hidden_size": 512, "decoder_hidden_size": 512, "embeddings_batch_norm": true,
+    "rec_loss": true, "transformer_average_features": false, "transformer_use_embedding_net": true,
+    "transformer_dim": 300, "transformer_depth": 3, "transformer_heads": 4,
+    "transformer_dim_head": 64, "transformer_mlp_dim": 1024, "transformer_dropout": 0.3,
+    "transformer_embedding_dim": 64, "transformer_embedding_time_len": 120,
+    "transformer_embedding_dropout": 0.2, "transformer_embedding_time_embed_type": "sinusoid",
+    "transformer_embedding_fourier_scale": 10.0, "transformer_embedding_embed_augment_position": false,
+    "transformer_embedding_modality": true, "transformer_attention_use_self_attention": false,
+    "transformer_attention_use_cross_attention": true, "audio_only": false, "video_only": false,
+    "transformer_use_class_token": true, "lr_scheduler": true, "modality": "both", "word_embeddings": "both"
+  },
+  "input_size_audio": 128,
+  "input_size_video": 4096,
+  "actual_feature_dimensions": {"audio": 1024, "video": 512, "text": 1536},
+  "distance_fn": "L2Loss",
+  "stage_b_epoch": 12,
+  "stage_a_checkpoint_sha256": "807b00ad9937e9e0ac040e1fdd786aff0e222bf0dff23003dbbc26d8b5537995",
+  "stage_b_checkpoint_sha256": "ee60a5e9da3654e1e5ebb4b31366a75504810d2ccc15a1b6d7f07687320e1dd6",
+  "classes": ["ApplyEyeMakeup","ApplyLipstick","Archery","BabyCrawling","BalanceBeam","BasketballDunk","BlowDryHair","BlowingCandles","BodyWeightSquats","Bowling","BoxingPunchingBag","BoxingSpeedBag","CliffDiving","CricketBowling","CricketShot","CuttingInKitchen","FieldHockeyPenalty","FloorGymnastics","FrisbeeCatch","FrontCrawl","Haircut","HammerThrow","Hammering","HandstandPushups","HandstandWalking","HeadMassage","IceDancing","Knitting","LongJump","MoppingFloor","ParallelBars","PlayingCello","PlayingDaf","PlayingDhol","PlayingFlute","PlayingSitar","Rafting","ShavingBeard","Shotput","SkyDiving","SoccerPenalty","StillRings","SumoWrestling","Surfing","TableTennisShot","UnevenBars","WallPushups","WritingOnBoard"],
+  "class_ids": [0,1,2,3,4,8,12,13,14,15,16,17,21,22,23,24,28,29,30,31,33,34,35,36,37,38,43,49,50,54,56,58,59,60,61,64,72,77,78,82,84,85,86,87,89,95,98,99],
+  "seen_mask": [true,true,true,true,true,true,false,true,true,true,true,true,true,true,true,false,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,false,false,true,false,true,true,true,true,true,true,true,true,true,false],
+  "seen_count": 42,
+  "unseen_count": 6,
+  "seen_bias": {"value": 2.933333158493042, "source": "stage_A_validation_log; NOT fitted on test labels"},
+  "confidence_calibrated": false,
+  "example_source": "first UCF test feature; only functional verification",
+  "sha256": {
+    "model.pt": "d62d9a1c36d4215e0dfc7b5cb9ea63bb4bea59a045135492cb47f04d7b59e752",
+    "class_bank.npz": "11180ea420aca4a51e14962b950926a15c74ef3b7afa0651d385d39eb96546d6",
+    "example_features.npz": "0ddad0e5e2896459209f4c0cff1a911fc3dbd2ca90c58595607dfd6a372a36d2"
+  }
+}

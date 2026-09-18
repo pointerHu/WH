@@ -1,0 +1,13 @@
+{
+  "preprocessing": "passed",
+  "input": "synthetic test pattern + 440Hz tone",
+  "audio_shape": [1, 320000],
+  "image_size": [320, 240],
+  "missing_audio_rejected": true,
+  "metadata": {"duration_seconds": 2.024, "width": 320, "height": 240, "has_audio": true, "audio_sample_rate": "44100", "audio_channels": 1, "video_codec": "mpeg4", "frame_index": 10, "frame_count": 20, "audio_start_seconds": 0.0, "audio_samples": 320000, "sample_rate": 32000, "preprocess_profile": "legacy", "silent_audio": false},
+  "raw_video_classification_verified": false,
+  "clip_forward": "passed",
+  "clip_shape": [1, 512],
+  "clip_sha256": "40d365715913c9da98579312b702a82c18be219cc2a73407c4526f58eba950af",
+  "clip_norm": 1.0
+}

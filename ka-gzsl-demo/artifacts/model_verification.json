@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "test_kind": "real_feature_classifier_adapter_not_raw_video",
+  "max_absolute_logit_difference": 0.0,
+  "reference_class_id": 0,
+  "prediction": {"class_id": 77, "label": "ShavingBeard", "seen": false, "confidence": 0.22900277376174927, "distance": 4.347813606262207},
+  "candidate_count": 48,
+  "zsl_candidate_count": 6,
+  "wrong_audio_dimension_rejected": true,
+  "checkpoint_sha256": "d62d9a1c36d4215e0dfc7b5cb9ea63bb4bea59a045135492cb47f04d7b59e752",
+  "probability_calibrated": false,
+  "raw_video_end_to_end_verified": false
+}
