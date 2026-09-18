@@ -1,0 +1,28 @@
+name: Read manuscript source files once
+on:
+  push:
+    branches: [manuscript-read-20260918]
+    paths: [.github/workflows/manuscript-read-once.yml]
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Collect the three requested source files
+        run: |
+          mkdir -p source-bundle
+          cp '论文方案/王虎-论文-0917.docx' source-bundle/
+          cp '论文方案/实验结果.xlsx' source-bundle/
+          cp '论文方案/KA-GZSL_TMM.tex' source-bundle/
+          sha256sum source-bundle/* > source-bundle/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-source-bundle
+          path: source-bundle/
+          retention-days: 1
+          if-no-files-found: error
