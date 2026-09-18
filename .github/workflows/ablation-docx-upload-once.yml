@@ -1,0 +1,62 @@
+name: Upload requested ablation DOCX once
+on:
+  push:
+    branches: [manuscript-read-20260918]
+    paths: [.github/workflows/ablation-docx-upload-once.yml]
+permissions:
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Reconstruct and verify the exact previously delivered DOCX
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, io, json, lzma, os, re, urllib.request, zipfile
+          repo = os.environ['GITHUB_REPOSITORY']
+          assert repo == 'pointerHu/WH'
+          root = 'https://api.github.com/repos/' + repo + '/git/blobs'
+          def api(url, body=None):
+              request = urllib.request.Request(url, data=None if body is None else json.dumps(body).encode(), headers={
+                  'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json',
+                  'Content-Type': 'application/json',
+                  'User-Agent': 'requested-ablation-docx-upload'})
+              with urllib.request.urlopen(request, timeout=90) as response:
+                  return json.load(response)
+          template_url = 'https://raw.githubusercontent.com/python-openxml/python-docx/v1.2.0/src/docx/templates/default.docx'
+          with urllib.request.urlopen(template_url, timeout=60) as response:
+              template = response.read()
+          assert hashlib.sha256(template).hexdigest() == '2094b5bddffe9cf973d61fe03388413804f034160718494a65db7e98da40d35d'
+          packed = base64.b64decode(api(root + '/74807f809cfd64de3a94b79552971d5c0d485b17')['content'])
+          records = json.loads(lzma.decompress(packed))
+          def normalize(data):
+              if data.startswith(b'<?xml'):
+                  position = data.index(b'?>') + 2
+                  return data[:position] + b'\n' + re.sub(rb'>\s+<', b'><', data[position:]).strip()
+              return data
+          output = io.BytesIO()
+          with zipfile.ZipFile(io.BytesIO(template)) as source, zipfile.ZipFile(output, 'w') as archive:
+              for name, mode, prefix, suffix, middle, timestamp, attributes, system, compression in records:
+                  old = source.read(name) if name in source.namelist() else b''
+                  if mode:
+                      old = normalize(old)
+                  data = old[:prefix] + middle.encode('utf-8') + (old[-suffix:] if suffix else b'')
+                  info = zipfile.ZipInfo(name, tuple(timestamp))
+                  info.external_attr = attributes
+                  info.create_system = system
+                  info.compress_type = compression
+                  archive.writestr(info, data, compresslevel=6)
+          docx = output.getvalue()
+          assert len(docx) == 43862
+          digest = hashlib.sha256(docx).hexdigest()
+          assert digest == '4deb1a58999a92c92f43a5755872719c66789e9989e475cde39016b47cac3c82', 'DOCX checksum mismatch'
+          with zipfile.ZipFile(io.BytesIO(docx)) as archive:
+              assert archive.testzip() is None
+          result = api(root, {'content': base64.b64encode(docx).decode(), 'encoding': 'base64'})
+          assert result['sha'] == '6de7fdd5727e4a71c8486bf039a692ac7d56ee4c'
+          print(json.dumps({'verified': True, 'blob_sha': result['sha'], 'sha256': digest, 'size': len(docx)}))
+          PY
