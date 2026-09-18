@@ -1,46 +1,71 @@
 # KA-GZSL 原始视频论文展示系统
 
-独立于 `pointerHu/KA-GZSL` 的新项目。所有新增源代码、部署脚本和说明均位于 **WH/ka-gzsl-demo**。本项目不修改原论文仓库。
+独立项目，全部新增源代码和说明位于 **WH/ka-gzsl-demo**，不修改 `pointerHu/KA-GZSL`。
 
-## 目标与边界
+**2026-09-18：已在 DESKTOP-VOA285C 的 WSL2 + RTX 3090 Ti 上完成真实含音轨视频的端到端推理。** 用户安装的 `HTSAT_BERT_zero_shot.pt` 已接入；本次没有继续下载 Google Drive 文件。当前展示使用已完整训练的 UCF 模型。
 
-浏览器选择/拖入含音轨的视频 → 中间帧与音轨预处理 → 冻结 CLIP ViT-B/32 与 WavCaps HTSAT-BERT → 原 KA-GZSL 已训练模型 → 类别语义原型距离匹配 → 预测类别、Top-5 相对置信分数及可下载 JSON。
+实际状态与证据：[验证报告](artifacts/VALIDATION.md) · [完整 JSON 记录集合](artifacts/raw_video_verification.json)。成功运行不代表已经复现论文准确率或完成置信度校准。
 
-**重要：代码完整不等于端到端已经验证。** 验证状态以 `artifacts/VALIDATION.md` 和实际测试报告为准。缺少编码器权重时，页面明确禁用视频分类，不会用随机特征、零音频、其他 CLAP 模型或假概率冒充结果。真实特征验证按钮只验证 KA-GZSL 分类部分。
+## 立即使用：VOA285C
 
-当前优先接入已完成完整训练的 **UCF 模型**。不会将 ActivityNet/VGGSound 的短程测试权重当成完整训练模型。
+双击 Windows 启动入口：
 
-## 为什么要加前端编码器
+```text
+D:\learning\work\WH\ka-gzsl-demo\start-demo.cmd
+```
 
-你提到的“AVCV”可能指 AVCA，但本次以实际代码为依据：所固定 KA-GZSL 版本的提取脚本使用 **CLIP 512 维视觉特征 + WavCaps 1024 维音频特征**，不是直接把视频送进 KA-GZSL，也不是随意找一个音频网络即可替换。旧配置中的 128/4096 维字段不能用来推断当前模型的实际输入接口。详见 [技术方案](docs/architecture.md)。
-
-## 页面功能
-
-- 选择/拖入视频、浏览器本地预览、GZSL / ZSL 候选集切换。
-- 后端实际阶段进度、类别、Top-5、剩余候选概率总和、耗时与模型校验值。
-- 明确区分“原始视频推理”和“已有特征验证”，错误及缺件状态不伪造输出。
-- 任务隔离、上传体积/时长限制、串行 GPU 推理、本机访问限制、短期中间文件留存。
-
-## 在 VOA285C 上打开
-
-服务在 WSL Ubuntu-22.04 中运行。浏览器访问：
+浏览器访问：
 
 ```text
 http://127.0.0.1:8765
 ```
 
-在 WSL 中启动：
+点击选择或拖入**含音轨**的视频，保留 `GZSL · 已见类 + 未见类`，点击“开始视频分类”。真实推理完成后显示类别、Top-5 相对置信分数、耗时和可下载 JSON。不要把“运行真实特征验证”按钮当成视频上传识别，它只测试已提取特征的分类器。
 
-```bash
-cd /home/admin/projects/WH/ka-gzsl-demo
-bash scripts/serve.sh
+本机已经准备了一个浏览器可播放的真实测试示例：
+
+```text
+D:\learning\work\WH\ka-gzsl-demo\examples\mmaction2-test-av.mp4
 ```
 
-Windows 启动脚本及本机实际路径见 `windows/` 和 `artifacts/VALIDATION.md`。
+本次该 MP4 的预测是 `ApplyEyeMakeup`，相对分数 **25.89%**，模型工作进程耗时 **7.22 秒**。对应原始 AVI 的相对分数为 **28.47%**；转码改变了输入，不要求两个文件的分数一致。来源和 SHA256 见验证记录，这不是新的准确率基准。
 
-## 新环境部署
+视频结果会把任务 ID 写入地址栏，刷新页面可恢复结果与中间帧。已完成原始 AVI 任务的本机地址：
 
-网页使用独立 Python >=3.10 环境。模型兼容层使用独立 Python 3.8.20 环境，复用已验证的 PyTorch 1.7.1 依赖；不修改旧训练环境。
+```text
+http://127.0.0.1:8765/?job=e7e30d80745046a49a4bc949d615e74f
+```
+
+历史任务清理后链接会失效。选择新视频时会清除旧预测，防止把上一段视频的结果误认为新视频结果。
+
+## 输入视频如何进入论文模型
+
+```text
+原始视频
+  ├─ 读取中间帧 → 冻结 CLIP ViT-B/32 → 512 维视觉特征
+  └─ 提取音轨 → 32 kHz 单声道 → 居中截取/补齐至 10 秒
+                              → 冻结 WavCaps HTSAT-BERT → 1024 维音频特征
+       ↓
+原 KA-GZSL 已训练网络 → 类别语义原型距离 → 已见类偏置 → 类别与相对分数
+```
+
+以固定版本代码为准：当前接口是 **512 维 CLIP 视觉 + 1024 维 WavCaps 音频**。旧 YAML 的 128/4096 字段不是当前实际特征接口，也不能任意换成另一个同名 CLAP。类别文本向量使用已导出的 1536 维 CLIP/WavCaps 语义原型。
+
+完整 WavCaps checkpoint 已包含音频编码器和投影层，本项目严格加载这两部分；推理现有类别不需要再下载 BERT，也不需要先加载作者硬编码路径中的 HTSAT.ckpt。无音轨视频会明确报错，不使用随机特征或假音频补位。
+
+默认保留原提取脚本的 `legacy` 行为。原脚本的 BGR/浮点转 PIL 处理存在值得注意的历史行为，不能偷偷修正后声称特征完全一致。详细分析见 [技术方案](docs/architecture.md)。原始视频与已有训练特征的配对数值一致性仍待验证。
+
+## 候选类别和置信分数
+
+当前 GZSL 候选为 **42 个已见类 + 6 个未见类，共 48 类**；ZSL 仅在 6 个未见类中选择。不是 UCF101 全部 101 类，更不是任意开放词汇。默认建议使用 GZSL 展示普通上传视频；ZSL 会主动排除所有已见类。
+
+分数计算为 `softmax((-distance - seen_bias) / temperature)`。温度默认 1.0，显示为**未校准相对置信分数**，不等于准确率或真实正确概率。候选外事件也会被分到某个候选类；本系统没有开放世界拒识保证。不会为了使页面分数更好看而人为缩小温度。
+
+`calibrate_temperature.py` 仅对独立标注校准数据拟合温度并写报告，不自动改线上配置；不得用训练或测试标签冒充独立校准集。
+
+## 新电脑部署与依赖
+
+网页使用独立 Python >=3.10 环境；模型使用独立 Python 3.8.20 环境，复用已验证的 PyTorch 1.7.1 依赖，不覆盖原训练环境。
 
 ```bash
 python3 scripts/bootstrap_local.py \
@@ -54,66 +79,67 @@ python3 scripts/bootstrap_local.py \
   https://codeload.github.com/openai/CLIP/zip/d05afc436d78f1c48dc0dbf8e5980a9d471f35f6
 ```
 
-没有旧训练环境的电脑，应先按原代码完成训练环境和模型复现，再导出展示包。此项目不是把旧依赖强行升级到新 PyTorch 的实现。
+没有旧环境的电脑，先按原项目建立可用训练环境，再导出展示包。本机 `.venv-model` 仍依赖共享的旧 PyTorch 包目录，不能删除该目录。实际配置在未提交的 `config.local.json`。
 
-### 导出已训练模型、类别向量与验证集偏置
+导出配对的训练模型、类别向量和验证集偏置：
 
 ```bash
 .venv-model/bin/python scripts/export_bundle.py \
   --stage-a /path/to/full-run/stage-a \
   --stage-b /path/to/full-run/stage-b \
   --data-root /path/to/data/UCF
-```
-
-脚本依据 stage-A 最佳模型的 epoch 选择配对 stage-B checkpoint，只从 `Validation betas` 读取偏置，**不使用测试标签调参**。示例固定选择测试特征的第一条，只用于功能检查，不用于概率校准。
-
-### 编码器权重
-
-```bash
 .venv-model/bin/python scripts/download_clip.py
-# 已取得可信的同款 WavCaps 权重后，可安装到项目内：
 .venv-model/bin/python scripts/download_clip.py --wavcaps-local /path/to/HTSAT_BERT_zero_shot.pt
 ```
 
-CLIP 下载自官方源码内的地址并验证官方 SHA256。WavCaps 必须使用与训练特征匹配的权重，官方来源见 [模型清单](assets/MODELS.md)。该脚本不会绕过下载站点授权，不会自动选择其他 LAION-CLAP。
+只安装可信来源的本地权重；不允许浏览器上传 `.pt`。权重来源与安全边界见 [模型说明](assets/MODELS.md) 和 [安全说明](docs/security.md)。不自动下载 Google Drive 文件，不用其他 LAION-CLAP 权重替代。
 
-### 测试与启动
+启动 WSL 服务：
+
+```bash
+cd /home/admin/projects/WH/ka-gzsl-demo
+bash scripts/serve.sh
+```
+
+只监听本机 `127.0.0.1:8765`，不是公网部署。默认最多 100 MB、120 秒，GPU 串行处理。公网部署还需要独立的鉴权、HTTPS、资源隔离及安全评估，不能简单开放当前端口。
+
+## 复查与测试
 
 ```bash
 .venv-web/bin/python -m pytest -q tests/test_web.py
 .venv-model/bin/python scripts/verify_model.py
-bash scripts/serve.sh
+.venv-model/bin/python scripts/verify_media.py
+.venv-model/bin/python scripts/verify_backbones.py
+# 先启动服务，再从实际 HTTP 上传视频：
+python3 scripts/verify_video_http.py runtime/public-samples/real-av-demo.mp4 \
+  --description real_av_demo --output artifacts/my_video_verification.json
 ```
 
-## 相对置信分数并非准确率
-
-当前使用 `softmax((-distance - seen_bias) / temperature)`。默认 `temperature=1.0`，显示为**未校准相对置信分数**。候选类别变化会改变这些数值，候选外的视频也可能被高分归到某个候选类。不能据此宣称开放世界识别能力。
-
-`calibrate_temperature.py` 只在用户提供的独立标注校准数据上拟合温度并写出报告，不自动改动线上配置。最终模型与输入域仍需独立验证。详见 [概率与评估说明](docs/architecture.md)。
-
-## 中间文件与上传范围
-
-每次运行在本项目 `runtime/jobs/<uuid>/` 保存 `request.json`、`metadata.json`、中间帧、10 秒音频数组、`features.npz`、`scores.npz`、`result.json` 和工作日志。没有原始视频的特征验证任务不会生成视频帧。
-
-**WH 是公开仓库。** 提交源代码、配置模板、脚本、去标识化实验清单、验证报告和非私密示例结果；不自动发布用户上传的视频/音频，不把虚拟环境、原始数据集和大体积模型权重塞入 Git 历史。模型和类别向量保留在本机 `assets/ucf/`，并提供导出脚本与 SHA256 清单。测试报告会列出已上传和本机保留的范围。
-
-## 目录
+脚本 `prepare_public_sample.py --archive /path/to/archive.zip` 可从固定官方 MMAction2 归档提取并校验测试 AVI，再生成浏览器 MP4。归档地址为：
 
 ```text
-static/                  展示页面，无外部 CDN 依赖
-webapp.py                FastAPI 上传、任务与结果 API
-inference.py             独立 Python 模型进程
-media.py                 视频与音轨预处理
-model_adapter.py         原 KA-GZSL / CLIP / WavCaps 适配
-scripts/                 环境、模型导出、下载、测试与校准脚本
-tests/                   Web API 安全/错误处理测试
-docs/                    方案、可信度与部署边界
-assets/                  模型来源清单；大模型与语义向量留在本机
-artifacts/               可公开的真实验证报告、参数和结果
-runtime/                 本机任务及中间文件，不提交
-.vendor/                 固定上游源码快照，不修改原仓库
+https://codeload.github.com/open-mmlab/mmaction2/zip/a5a167dff2399e2d182a60332325f9c0d4663517
 ```
 
-## 引用与第三方说明
+本次验证包含真实 AVI 的 GZSL/ZSL、真实转码 MP4、合成音视频流程、无音轨拒绝、JSON 下载一致性、分类器等价性和 Windows 页面截图检查。详细结果不以“代码看起来能运行”代替，见验证报告。
 
-原模型代码：`pointerHu/KA-GZSL`，固定提交 `085eae46195728fef3ad86b7a046528913f9bc39`。CLIP 与 WavCaps 原项目、论文和第三方许可见 [来源说明](docs/sources.md)。新增展示代码不改变原论文的模型贡献，也不将网页工程实现当作新的实验结果。
+## 目录和上传范围
+
+```text
+static/                  页面、交互与历史结果恢复
+webapp.py                FastAPI 上传、任务和结果 API
+inference.py             独立模型进程
+media.py                 视频/音轨预处理
+model_adapter.py         原 KA-GZSL、CLIP、WavCaps 适配
+scripts/                 环境、导出、样本、验证和校准脚本
+tests/                   Web API 测试
+docs/                    技术方案、安全与来源
+artifacts/               真实验证报告及中间结果 JSON 集合
+assets/                  本机模型、类别向量及来源清单
+runtime/jobs/<uuid>/      本机输入、中间帧/音频/特征/分数、结果、日志
+.vendor/                 固定上游源码副本，不改原仓库
+```
+
+**WH 是公开仓库。** 上传源代码、配置模板、脚本、说明、模型校验清单和完整验证记录集合；不把权重、语义 NPZ、虚拟环境、原视频/音频或私人上传内容发布到 Git 历史。所有任务中间文件留在本项目本机目录。默认 24 小时保留策略在服务启动或新建任务时清理，历史结果链接届时会失效。
+
+原模型固定提交为 `085eae46195728fef3ad86b7a046528913f9bc39`。第三方论文、源代码与许可见 [来源说明](docs/sources.md)。展示工程不改变原论文模型贡献，也不把单个演示视频的预测写成论文性能结论。
