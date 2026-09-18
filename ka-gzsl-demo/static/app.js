@@ -44,6 +44,11 @@ function choose(file) {
   if (!/\.(mp4|avi|mov|mkv|webm)$/i.test(file.name)) return fail('请选择支持的视频文件。');
   if (health && file.size > health.max_upload_mb * 1024 * 1024) return fail('视频超过文件大小限制。');
   selectedFile = file;
+  history.replaceState(null, '', location.pathname);
+  document.getElementById('savedPreview')?.remove();
+  $('videoPreview').hidden = false;
+  show('resultContent', false); show('emptyResult', true); show('progressWrap', false);
+  text('resultTag', '等待输入');
   if (objectURL) URL.revokeObjectURL(objectURL);
   objectURL = URL.createObjectURL(file);
   $('videoPreview').src = objectURL;
@@ -95,6 +100,18 @@ function render(result, jobId) {
   const warnings = $('resultWarnings'); warnings.replaceChildren();
   result.warnings.forEach(message => { const p = document.createElement('p'); p.textContent = message; warnings.append(p); });
   $('downloadResult').href = `/api/jobs/${jobId}/result`;
+  history.replaceState(null, '', `?job=${encodeURIComponent(jobId)}`);
+  $('modeSelect').value = result.mode;
+  text('classCount', result.candidate_count);
+  if (result.input_kind === 'raw_video' && !selectedFile) {
+    document.getElementById('savedPreview')?.remove();
+    const image = document.createElement('img'); image.id = 'savedPreview';
+    image.src = `/api/jobs/${jobId}/preview`; image.alt = '该推理任务的视频中间帧';
+    image.style.cssText = 'display:block;width:100%;border-radius:10px';
+    $('videoWrap').prepend(image); $('videoPreview').hidden = true;
+    text('fileInfo', '历史结果 · 视频中间帧；选择新视频后重新计算');
+    show('dropzone', false); show('videoWrap', true);
+  }
 }
 $('fileInput').addEventListener('change', event => choose(event.target.files[0]));
 $('changeVideo').addEventListener('click', () => $('fileInput').click());
@@ -119,4 +136,17 @@ $('sampleButton').addEventListener('click', async () => {
   finally { busy = false; buttons(); }
 });
 window.addEventListener('beforeunload', () => { if (objectURL) URL.revokeObjectURL(objectURL); });
-refreshHealth();
+$('modeSelect').addEventListener('change', () => {
+  if (health) text('classCount', $('modeSelect').value === 'zsl' ? health.unseen_count : health.classes.length);
+});
+async function initialize() {
+  await refreshHealth();
+  const jobId = new URLSearchParams(location.search).get('job');
+  if (!jobId) return;
+  if (!/^[a-f0-9]{32}$/.test(jobId)) return fail('结果链接格式无效。');
+  begin();
+  try { await follow({id:jobId}); }
+  catch (error) { show('progressWrap', false); text('resultTag', '未完成'); fail(error.message); }
+  finally { busy = false; buttons(); }
+}
+initialize();
