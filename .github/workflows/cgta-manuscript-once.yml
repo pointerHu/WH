@@ -1,0 +1,34 @@
+name: Read current manuscript for CGTA rename
+on:
+  push:
+    branches: [manuscript-cgta-20260920]
+    paths: [.github/workflows/cgta-manuscript-once.yml]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 2f859bb100f360ba04e332c3341de999ff02fb63
+          persist-credentials: false
+      - name: Copy and verify the requested source only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          source=Path('论文方案/王虎-论文-0917.docx').read_bytes()
+          digest=hashlib.sha1(b'blob '+str(len(source)).encode()+b'\0'+source).hexdigest()
+          assert digest=='7be7b980abcaece67f021137c5050a08576cbf6c',digest
+          Path('cgta-source').mkdir()
+          Path('cgta-source/source.docx').write_bytes(source)
+          print('Verified source',digest,len(source))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cgta-current-manuscript
+          path: cgta-source/
+          retention-days: 1
+          if-no-files-found: error
