@@ -1,0 +1,36 @@
+name: Read requested experiment update sources
+on:
+  push:
+    branches: [manuscript-results-20260920]
+    paths: [.github/workflows/results-refresh-once.yml]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ab55dff52ce22ca87cd0aecc5686ccface83bff7
+          persist-credentials: false
+      - name: Verify and collect the two requested files only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil
+          out = Path('results-update-sources')
+          out.mkdir()
+          for name, expected in [('王虎-论文-0917.docx', 'ab1e845d19cafad1ca567c2c83d88ce645553c1b'), ('实验结果.xlsx', '25042afad8add2b908ada914aa273b2769994bc3')]:
+              p = Path('论文方案') / name
+              data = p.read_bytes()
+              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+              assert actual == expected, (name, actual)
+              shutil.copyfile(p, out / name)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-update-sources
+          path: results-update-sources/
+          retention-days: 1
+          if-no-files-found: error
