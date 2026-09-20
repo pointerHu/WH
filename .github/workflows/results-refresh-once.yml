@@ -1,10 +1,10 @@
-name: Read requested experiment update sources
+name: Prepare verified numeric-only manuscript update
 on:
   push:
     branches: [manuscript-results-20260920]
     paths: [.github/workflows/results-refresh-once.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -14,23 +14,38 @@ jobs:
         with:
           ref: ab55dff52ce22ca87cd0aecc5686ccface83bff7
           persist-credentials: false
-      - name: Verify and collect the two requested files only
+      - name: Reproduce and verify the numerical patch without updating any branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib, shutil
-          out = Path('results-update-sources')
-          out.mkdir()
-          for name, expected in [('王虎-论文-0917.docx', 'ab1e845d19cafad1ca567c2c83d88ce645553c1b'), ('实验结果.xlsx', '25042afad8add2b908ada914aa273b2769994bc3')]:
-              p = Path('论文方案') / name
-              data = p.read_bytes()
-              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-              assert actual == expected, (name, actual)
-              shutil.copyfile(p, out / name)
+          import base64, hashlib, io, json, os, urllib.request, zipfile, zlib
+          assert os.environ['GITHUB_REPOSITORY'] == 'pointerHu/WH'
+          def git_sha(data):
+              return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+          source = Path('论文方案/王虎-论文-0917.docx').read_bytes()
+          assert git_sha(source) == 'ab1e845d19cafad1ca567c2c83d88ce645553c1b'
+          assert git_sha(Path('论文方案/实验结果.xlsx').read_bytes()) == '25042afad8add2b908ada914aa273b2769994bc3'
+          encoded = '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'
+          patches = json.loads(zlib.decompress(base64.b64decode(encoded)))
+          assert len(patches) == 108
+          out = io.BytesIO()
+          with zipfile.ZipFile(io.BytesIO(source)) as original:
+              xml = original.read('word/document.xml')
+              for start, end, replacement in reversed(patches):
+                  xml = xml[:start] + replacement.encode('utf-8') + xml[end:]
+              assert hashlib.sha256(xml).hexdigest() == '91ac902dfb85916075ed66d9e4423c33dd428ab2393f0b9dba3154f2f5d2d77b'
+              with zipfile.ZipFile(out, 'w') as result:
+                  for info in original.infolist():
+                      data = xml if info.filename == 'word/document.xml' else original.read(info.filename)
+                      result.writestr(info, data, compresslevel=6)
+          docx = out.getvalue()
+          assert hashlib.sha256(docx).hexdigest() == '9deba865d419a2746471e5882ce4b14edc47e27c7d8b5adb06ab81a8efe18593'
+          assert git_sha(docx) == '0ded4b17ecfd359a411e5d4d0c8baef04cf9a50f'
+          req = urllib.request.Request('https://api.github.com/repos/pointerHu/WH/git/blobs', data=json.dumps({'content': base64.b64encode(docx).decode(), 'encoding':'base64'}).encode(), headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json', 'Content-Type':'application/json', 'User-Agent':'requested-numeric-manuscript-update'})
+          with urllib.request.urlopen(req, timeout=90) as response:
+              result = json.load(response)
+          assert result['sha'] == '0ded4b17ecfd359a411e5d4d0c8baef04cf9a50f'
+          print(json.dumps({'verified':True, 'blob_sha':result['sha'], 'size':len(docx), 'table_numbers_changed':84, 'prose_numbers_changed':34}))
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: results-update-sources
-          path: results-update-sources/
-          retention-days: 1
-          if-no-files-found: error
