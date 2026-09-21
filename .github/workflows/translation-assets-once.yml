@@ -1,0 +1,49 @@
+name: Prepare manuscript translation assets
+on:
+  push:
+    branches: [translation-sgtg-en-20260921]
+    paths: [.github/workflows/translation-assets-once.yml]
+permissions:
+  contents: read
+jobs:
+  assets:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy requested documents and extract original figures
+        shell: python
+        run: |
+          from pathlib import Path
+          import zipfile, shutil
+          out = Path('translation-assets')
+          out.mkdir(exist_ok=True)
+          src = Path('论文方案/王虎-论文-0917.docx')
+          shutil.copy2(src, out/'source_cn.docx')
+          shutil.copy2(Path('论文方案/kais_infocom.docx'), out/'style_reference.docx')
+          with zipfile.ZipFile(src) as z:
+              for i, ext in [(1,'emf'),(2,'emf'),(3,'png')]:
+                  (out/f'fig{i}.{ext}').write_bytes(z.read(f'word/media/image{i}.{ext}'))
+      - name: Render original vector figures for Word compatibility
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.Drawing
+          $dir = Join-Path $env:GITHUB_WORKSPACE 'translation-assets'
+          foreach ($i in 1,2) {
+            $src = [System.Drawing.Image]::FromFile((Join-Path $dir "fig$i.emf"))
+            $width = 2100
+            $height = [int]($width * $src.Height / $src.Width)
+            $bmp = [System.Drawing.Bitmap]::new($width, $height)
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.Clear([System.Drawing.Color]::White)
+            $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $g.DrawImage($src, 0, 0, $width, $height)
+            $bmp.Save((Join-Path $dir "fig$i.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+            $g.Dispose(); $bmp.Dispose(); $src.Dispose()
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-translation-assets
+          path: translation-assets/
+          retention-days: 3
