@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import base64, hashlib, html, io, json, os, pathlib, re, shutil, zipfile, zlib
+          import base64, copy, hashlib, html, io, json, os, pathlib, re, shutil, zipfile, zlib
           import xml.etree.ElementTree as ET
           root = pathlib.Path('论文方案')
           temp = pathlib.Path(os.environ['RUNNER_TEMP']) / 'terminology'
@@ -102,7 +102,7 @@ jobs:
                   raise RuntimeError('Reference entries changed')
               with zipfile.ZipFile(output, 'w') as destination:
                   for info in archive.infolist():
-                      destination.writestr(info, revised_xml if info.filename == 'word/document.xml' else archive.read(info.filename))
+                      destination.writestr(copy.copy(info), revised_xml if info.filename == 'word/document.xml' else archive.read(info.filename))
               with zipfile.ZipFile(output) as destination:
                   if destination.testzip() is not None:
                       raise RuntimeError('DOCX integrity test failed')
