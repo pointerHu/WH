@@ -1,0 +1,149 @@
+name: Apply source-grounded terminology revision
+on:
+  push:
+    branches: [terminology-four-sources-20260921]
+    paths: ['.github/workflows/terminology-revision-once.yml']
+permissions:
+  contents: write
+jobs:
+  revise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Load reviewed patch from isolated preparation branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/terminology"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git show "$GITHUB_SHA:.github/terminology/patch.b64" > "$RUNNER_TEMP/terminology/patch.b64"
+          git show "$GITHUB_SHA:.github/terminology/SGTG_Terminology_Revision_Notes.md" > "$RUNNER_TEMP/terminology/notes.md"
+      - name: Verify sources and patch only ordinary Word text nodes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64, hashlib, html, io, json, os, pathlib, re, shutil, zipfile, zlib
+          import xml.etree.ElementTree as ET
+          root = pathlib.Path('论文方案')
+          temp = pathlib.Path(os.environ['RUNNER_TEMP']) / 'terminology'
+          def sha256(data):
+              return hashlib.sha256(data).hexdigest()
+          def git_blob(data):
+              return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+          expected_sources = {
+              '论文方案.md': '80a5a4f03b7a4e0aa8372a7aca00290ffe5d6012',
+              'Audio-Visual_Generalized_Zero-Shot_Learning.md': '0c93d936084085ad0e28fb24300fd33cb829bc44',
+              'Semi-IIN论文完整.md': '1884802ef618685edc1f8a0cf8f9f7d0c671935a',
+              'QA-TIGER_CVPR2025_完整论文.md': 'd34c39df2523ae0d502aea2649a0cc4c0788568f',
+              'EZ-AVGZL论文实验前内容.md': '353adfdfbd783bec4babdadadeb882041788a8dd',
+          }
+          for name, expected in expected_sources.items():
+              actual = git_blob((root / name).read_bytes())
+              if actual != expected:
+                  raise RuntimeError('Source changed since review: ' + name)
+              print('SOURCE_VERIFIED', name, actual)
+          packed = zlib.decompress(base64.b64decode((temp / 'patch.b64').read_text()))
+          if sha256(packed) != 'e05877fa53bbe1a940398373cdf1892a1273a829f57c5c8442c3fe255d6fc832':
+              raise RuntimeError('Patch transfer checksum mismatch')
+          patch = json.loads(packed)
+          notes = (temp / 'notes.md').read_bytes()
+          if sha256(notes) != '351ab82e605cfa3cc506e978bbdc08452d81226a35fb751965055e6776d48814':
+              raise RuntimeError('Revision notes checksum mismatch')
+          source_path = root / 'SGTG_English_Translation.docx'
+          original = source_path.read_bytes()
+          if sha256(original) != patch['src']:
+              raise RuntimeError('Manuscript changed since review; do not overwrite')
+          output = temp / 'SGTG_English_Translation_Terminology_Revised.docx'
+          ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main', 'm': 'http://schemas.openxmlformats.org/officeDocument/2006/math'}
+          with zipfile.ZipFile(io.BytesIO(original)) as archive:
+              xml = archive.read('word/document.xml')
+              matches = list(re.finditer(rb'(<w:t(?:\s[^>]*)?>)(.*?)(</w:t>)', xml, re.S))
+              chunks, cursor, previous_index = [], 0, -1
+              if len(patch['changes']) != 87:
+                  raise RuntimeError('Unexpected text edit count')
+              for index, new_text in patch['changes']:
+                  if not previous_index < index < len(matches):
+                      raise RuntimeError('Invalid patch order')
+                  previous_index = index
+                  match = matches[index]
+                  chunks.append(xml[cursor:match.start(2)])
+                  chunks.append(html.escape(new_text, quote=False).encode('utf-8'))
+                  cursor = match.end(2)
+              chunks.append(xml[cursor:])
+              revised_xml = b''.join(chunks)
+              if sha256(revised_xml) != patch['xml']:
+                  raise RuntimeError('Revised XML differs from the visually reviewed document')
+              a, b = ET.fromstring(xml), ET.fromstring(revised_xml)
+              for query in ['.//m:oMath', './/w:drawing', './/w:pPr', './/w:rPr', './/w:sectPr']:
+                  before = [ET.tostring(e) for e in a.findall(query, ns)]
+                  after = [ET.tostring(e) for e in b.findall(query, ns)]
+                  if before != after:
+                      raise RuntimeError('Protected structure changed: ' + query)
+              before_tables, after_tables = a.findall('.//w:tbl', ns), b.findall('.//w:tbl', ns)
+              if len(before_tables) != 9 or len(after_tables) != 9:
+                  raise RuntimeError('Unexpected table count')
+              for ta, tb in zip(before_tables, after_tables):
+                  def numbers(table):
+                      text = ''.join((e.text or '') for e in table.findall('.//w:t', ns))
+                      return re.findall(r'(?<![A-Za-z])\d+(?:\.\d+)?', text)
+                  if numbers(ta) != numbers(tb):
+                      raise RuntimeError('Table numbers changed')
+              before_paras = a.find('w:body', ns).findall('w:p', ns)
+              after_paras = b.find('w:body', ns).findall('w:p', ns)
+              if len(before_paras) != len(after_paras):
+                  raise RuntimeError('Paragraph count changed')
+              if [ET.tostring(p) for p in before_paras[162:]] != [ET.tostring(p) for p in after_paras[162:]]:
+                  raise RuntimeError('Reference entries changed')
+              with zipfile.ZipFile(output, 'w') as destination:
+                  for info in archive.infolist():
+                      destination.writestr(info, revised_xml if info.filename == 'word/document.xml' else archive.read(info.filename))
+              with zipfile.ZipFile(output) as destination:
+                  if destination.testzip() is not None:
+                      raise RuntimeError('DOCX integrity test failed')
+                  changed_parts = [n for n in archive.namelist() if archive.read(n) != destination.read(n)]
+                  if changed_parts != ['word/document.xml']:
+                      raise RuntimeError('Unexpected package changes: ' + repr(changed_parts))
+          notes_path = root / 'SGTG_Terminology_Revision_Notes.md'
+          if notes_path.exists() and notes_path.read_bytes() != notes:
+              raise RuntimeError('Refusing to overwrite different existing revision notes')
+          shutil.copyfile(output, source_path)
+          notes_path.write_bytes(notes)
+          shutil.copyfile(notes_path, temp / 'SGTG_Terminology_Revision_Notes.md')
+          print('VALIDATION: 87 text nodes; 32 numbered equations, 244 math objects, 9 numeric tables, 3 figures and references preserved')
+          print('DOCUMENT_XML_SHA256', sha256(revised_xml))
+          print('REVISED_DOCX_SHA256', sha256(output.read_bytes()))
+          print('REVISED_DOCX_GIT_BLOB', git_blob(output.read_bytes()))
+          print('REVISION_NOTES_GIT_BLOB', git_blob(notes))
+          PY
+      - name: Commit only the revised manuscript and source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- '论文方案/SGTG_English_Translation.docx' '论文方案/SGTG_Terminology_Revision_Notes.md'
+          python - <<'PY'
+          import subprocess
+          files = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only', '-z']).decode().strip('\0').split('\0'))
+          expected = {'论文方案/SGTG_English_Translation.docx', '论文方案/SGTG_Terminology_Revision_Notes.md'}
+          if files != expected:
+              raise RuntimeError('Unexpected staged paths: ' + repr(files))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: align SGTG terminology with the four source papers'
+          git push origin HEAD:main
+          echo "REVISION_COMMIT $(git rev-parse HEAD)"
+      - name: Preserve exact revised deliverables
+        uses: actions/upload-artifact@v4
+        with:
+          name: sgtg-terminology-revised
+          path: |
+            ${{ runner.temp }}/terminology/SGTG_English_Translation_Terminology_Revised.docx
+            ${{ runner.temp }}/terminology/SGTG_Terminology_Revision_Notes.md
+          retention-days: 3
+          if-no-files-found: error
