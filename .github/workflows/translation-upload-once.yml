@@ -1,0 +1,65 @@
+name: Upload requested translation files
+on:
+  push:
+    branches: [upload-translation-files-20260921]
+    paths: ['.github/workflows/translation-upload-once.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out destination branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Download and verify the exact requested files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DOCX_URL: 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-695c-81f5-bf36-22d349fc0121/raw?se=2026-09-21T05%3A32%3A35Z&sp=r&sv=2026-02-06&sr=b&scid=a0c59c8d-c8f9-5e98-b0a8-2ccf11de3204&skoid=78501c7f-f65d-4e8d-9110-bed29e1beb41&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T13%3A37%3A58Z&ske=2026-09-21T13%3A37%3A58Z&sks=b&skv=2026-02-06&sig=xUFr0mIWgBEhG2VhI5sPAL18jDPspc4QZyvkdqCuujk%3D'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/translation-upload"
+          curl --fail --silent --show-error --location --retry 2 --max-time 120 "$DOCX_URL" -o "$RUNNER_TEMP/translation-upload/SGTG_English_Translation.docx"
+          curl --fail --silent --show-error --location --retry 2 --max-time 180 -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' -H 'X-GitHub-Api-Version: 2022-11-28' 'https://api.github.com/repos/pointerHu/WH/actions/artifacts/10621087326/zip' -o "$RUNNER_TEMP/translation-upload/manuscript_translation_assets.zip"
+          python - <<'PY'
+          import hashlib, os, pathlib, shutil, zipfile
+          folder = pathlib.Path(os.environ['RUNNER_TEMP']) / 'translation-upload'
+          destination = pathlib.Path('论文方案')
+          expected = {
+              'SGTG_English_Translation.docx': (1460027, 'fddabbab8a0627c8161cb7e87b19eaf1630e0b8475781102157cee904549b47f'),
+              'manuscript_translation_assets.zip': (13395577, '460a52fb89323aed9588a34c3ed4cffa264eb48eeae5a63924de8daf21cb2bfc'),
+          }
+          destination.mkdir(exist_ok=True)
+          for name, (size, checksum) in expected.items():
+              path = folder / name
+              data = path.read_bytes()
+              if len(data) != size or hashlib.sha256(data).hexdigest() != checksum:
+                  raise RuntimeError('Downloaded file differs from the original: ' + name)
+              with zipfile.ZipFile(path) as archive:
+                  if archive.testzip() is not None:
+                      raise RuntimeError('ZIP integrity check failed: ' + name)
+              target = destination / name
+              if target.exists() and target.read_bytes() != data:
+                  raise RuntimeError('Refusing to overwrite a different existing file: ' + name)
+              shutil.copyfile(path, target)
+              print('VERIFIED', name, size, checksum)
+          PY
+      - name: Commit only the two requested files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- '论文方案/SGTG_English_Translation.docx' '论文方案/manuscript_translation_assets.zip'
+          if git diff --cached --quiet; then
+            echo 'Both exact files already exist on main.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs: upload SGTG English translation and translation assets'
+          git push origin HEAD:main
+          echo "Upload commit: $(git rev-parse HEAD)"
