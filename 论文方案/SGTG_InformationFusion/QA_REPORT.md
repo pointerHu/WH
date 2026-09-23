@@ -103,3 +103,25 @@ Information Fusion官方作者指南本阶段访问仍为403；仅核验了Elsev
 
 提交前实际检查补充：明确候选87个文件，最大文件为最终PDF（1,730,805字节），未发现需单独大文件处理的文件。候选文本按私钥、GitHub令牌、API密钥及敏感赋值模式扫描无命中；这是范围内扫描结果，不是对所有可能机密的绝对保证。Git hooks目录无活动脚本，暂存区和已跟踪差异均为空；所有候选均位于本项目。最终PDF、两幅PDF插图和source/main.bbl没有被忽略，五类本地生成物的忽略规则已实际测试。
 Git差异空白检查另有329处空白提示：321处行尾空白、5处缩进空格/制表符、3处文件末尾空行，主要位于未改动的CAS/BST供应方源码及既有公式行；无合并冲突标记。未批量重写供应方文件或改变公式以清理这些非编译错误，详情保存在audit/stage5/staged-whitespace-check.txt。
+
+## 8. 本次续执行的独立冷构建与交付复核（2026-09-23 18:05–18:06）
+
+连接时发现上述完整交付及本地排版提交已经存在，因此沿用已确认工程，不重复迁移正文或覆盖已核验的源包。随后实际执行了两次额外冷构建：将当前可维护源码复制到全新 source-clean，将实际交付 ZIP 逐项解出到全新 flat-clean；这两个核验副本均不带任何既有 bbl/aux，输出目录初始为空。原工程、交付 ZIP 和保留的 main.bbl 未清理或修改。
+
+新的核验根目录：`audit/stage5/recheck-20260923-180544/`。两个工作目录分别为其中的 `source-clean/` 和 `flat-clean/`；每套控制台、XeLaTeX、BibTeX 日志分别在自身 `build/console.log`、`build/main.log`、`build/main.blg`。命令均为：
+
+```text
+C:\Users\admin\texlive\2026\bin\windows\latexmk.exe -g -xelatex -synctex=1 -interaction=nonstopmode -file-line-error -halt-on-error -outdir=build -auxdir=build main.tex
+```
+
+源码副本构建时间18:05:44–18:06:04，投稿ZIP副本构建时间18:06:09–18:06:29，均为VOA本地UTC+08:00，退出码均0，均实际运行XeTeX/format=xelatex及BibTeX。两套fls均未发现各自核验目录和现有TeX发行版以外的输入依赖。26项字体记录均嵌入；没有打包字体安装文件。
+
+两次新生成PDF与根目录现有交付PDF均为15页，逐页文字一致，15对三方渲染图逐像素一致。新生成bbl与source/main.bbl及submission_flat/main.bbl逐字节一致。因此保留原交付PDF与ZIP字节，不为生成时间差异改写二进制交付物。ZIP的71个同层文件CRC和逐项内容检查通过。
+
+本次重新对当前Word执行：74个正文/列表单位、29个标题、244个原始OMML对象、32个独立公式、814个物理表格格、608个最终PDF数字、12个图注表题，以及67组/69次引用目标核验。引用身份错配和未解析key均为0。重新生成的citation_map.csv/table_audit.csv记录与现有交付记录完全一致；46个原始文件哈希仍不变。
+
+本次已实际打开最新 renders-delivered 下的全部15页，并保存逐页记录visual-review.md。未发现正文/图表重叠、有效内容裁切、图片拉伸、假DOI或演示作者。图2密集标注、图3原像素限制及第13/15页尾部自然留白仍如第5节说明。已有1条标题盒子、5条空锚点、60条underfull及Adam的1条缺页码提示保留，没有批量屏蔽。
+
+Information Fusion官方Guide再次访问仍返回403，搜索未补足其正文，未采用其他期刊或第三方模板说明替代。本次读取的Elsevier官方LaTeX通用说明仍要求EM源文件同层，并要求按具体期刊Guide确定参考文献样式；投稿材料检查的未核验状态不变。
+
+本次Git只读复核确认main/origin/main和pointerHu/WH不变，仓库仍为PUBLIC，远程仍停在本地排版提交的父提交。公开这篇未发表论文尚未明确获准，推送继续暂停。已存在的排版提交保留，本次仅将实际新增核验记录作项目限定的本地提交；最新SHA与提交后状态记录于本地git_sync_status.json，不自引用写进本报告。
