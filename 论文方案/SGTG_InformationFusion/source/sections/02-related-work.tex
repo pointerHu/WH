@@ -1,0 +1,31 @@
+% !TeX root = ../main.tex
+
+% DOCX body[14]
+\section{Related Work}\label{sec:related-work}
+
+% DOCX body[15]
+\subsection{Audio-Visual Generalized Zero-Shot Learning}\label{sec:audio-visual-generalized-zero-shot-learning}
+
+% DOCX body[16]
+The central objective of AVGZSL is to transfer audio-visual knowledge from seen to unseen classes through class semantics. To bridge the modality gap between audio-visual observations and text, Parida et al. \cite{parida2020cjme} construct a shared embedding space in CJME, while Mazumder et al. \cite{mazumder2021avgzslnet} introduce label-feature reconstruction in AVGZSLNet. These approaches strengthen cross-modal correspondence through geometric alignment and semantic preservation, respectively. To address the limited information in class names and the restricted expressiveness of feature representations, Chen et al. \cite{chen2023kda} generate fine-grained descriptions using large language models and adjust training margins according to semantic similarity. Kurzend\"{o}rfer et al. \cite{kurzendorfer2024clipclap} combine pre-trained CLIP and CLAP features with two class label embeddings to improve alignment between audio-visual and textual representations. In addition to richer semantic content, class separability also affects recognition. Mo and Morgado \cite{mo2024easy} jointly optimize class separability and semantic preservation in EZ-AVGZL and use the optimized class embeddings to query audio-visual features and compute non-linear similarity scores.
+
+% DOCX body[17]
+Nevertheless, prior studies mainly strengthen alignment between audio-visual representations and class embeddings, leaving continuous temporal distributions and their connection to fusion decisions insufficiently explored. Therefore, SGTG uses candidate-class semantics for both temporal grounding and fusion control. The resulting class embeddings preserve semantic structure while remaining discriminative; they act not only as matching references but also as active queries for extracting and combining local evidence.
+
+% DOCX body[18]
+\subsection{Audio-Visual Cross-Modal Interaction and Fusion}\label{sec:audio-visual-cross-modal-interaction-and-fusion}
+
+% DOCX body[19]
+Audio-visual fusion must balance modality complementarity against the propagation of irrelevant information. To explicitly model cross-modal correspondence, Mercea et al. \cite{mercea2022avca} exchange audio-visual information through cross-modal attention in AVCA. In more general multimodal sequence learning, Tsai et al. \cite{tsai2019mult} use directional cross-attention to capture dependencies between unaligned sequences. Although these methods promote information exchange, interaction alone does not establish the reliability of the exchanged information. To enable selective interaction, Nagrani et al. \cite{nagrani2021bottlenecks} constrain cross-modal information flow through a small number of bottleneck tokens, while Lin et al. \cite{lin2025semiinn} use Intra-modal Masked Attention (IntraMA) and Inter-modal Masked Attention (InterMA), followed by a dynamic gate mechanism, for multimodal sentiment analysis. Further, Ma et al. \cite{ma2026famav} introduce text-conditioned semantic gating in FAMAV to select semantically relevant audio-visual channels.
+
+% DOCX body[20]
+However, restricting the scope of interaction or introducing semantic gating does not directly prevent irrelevant information from corrupting class-relevant evidence during relational modeling. To address this issue, we design DMIF to coordinate grounding and fusion. It models intra-modal and inter-modal relationships separately over the evidence sequences while retaining direct temporal evidence that bypasses the masked attention branches. Thus, fusion operates on discriminative evidence supporting the current class rather than on generic modality features.
+
+% DOCX body[21]
+\subsection{Temporal Modeling and Grounding}\label{sec:temporal-modeling-and-grounding}
+
+% DOCX body[22]
+Temporal modeling requires not only capturing dependencies between segments but also identifying which segments support the current semantic target. To overcome the inability of temporally averaged representations to exploit dynamic structure, Mercea et al. \cite{mercea2022tcaf} model temporal and cross-modal relationships in TCaF. To suppress redundant segments, Li et al. use question-related cues in PSTP-Net \cite{li2023pstp} and TSPM \cite{li2024tspm} to select key segments and focus computation on more discriminative content. To explicitly represent continuous weights over target-relevant segments, Xiao et al. \cite{xiao2024trust} employ Gaussian masks for soft temporal grounding in visually grounded video question answering. Kim et al. \cite{kim2025qatiger} further propose QA-TIGER, which uses question-aware fusion and temporal integration of Gaussian experts to independently weight and aggregate question-relevant audio and visual segments. Compared with discrete selection, these methods express the locality of evidence through parameterized temporal weights and allow multiple segments to jointly support a prediction.
+
+% DOCX body[23]
+For AVGZSL, however, temporal modeling must additionally establish transferable semantic associations between local evidence and candidate classes. Therefore, we propose class-conditioned Gaussian temporal aggregation: class descriptions first condition the audio-visual sequences, and discriminative class embeddings then guide continuous Gaussian weighting independently for the visual and audio streams. This design adaptively aggregates local evidence supporting the current class.

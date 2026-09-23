@@ -1,0 +1,152 @@
+% DOCX body[144] caption; body[145] editable table.
+\begin{table*}[width=\textwidth,pos=t]
+\centering
+\caption{Comparison of class embedding optimization objectives in DSPO (\%).}
+\label{tab:prototype-objectives}
+\SGTGtableSetup
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{0.25\textwidth}*{4}{c}!{\hspace{0.65em}}*{4}{c}!{\hspace{0.65em}}*{4}{c}@{}}
+\toprule
+% CELL T06R01C01
+\multirow{2}{*}{\textbf{Embedding objective}} &
+% CELL T06R01C02
+\multicolumn{4}{c}{\textbf{VGGSound-GZSL}\textsuperscript{\textbf{\textit{cls}}}} &
+% CELL T06R01C03
+\multicolumn{4}{c}{\textbf{UCF-GZSL}\textsuperscript{\textbf{\textit{cls}}}} &
+% CELL T06R01C04
+\multicolumn{4}{c}{\textbf{ActivityNet-GZSL}\textsuperscript{\textbf{\textit{cls}}}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}
+% CELL T06R02C01
+ &
+% CELL T06R02C02
+\textbf{\textit{S}} &
+% CELL T06R02C03
+\textbf{\textit{U}} &
+% CELL T06R02C04
+\textbf{HM} &
+% CELL T06R02C05
+\textbf{ZSL} &
+% CELL T06R02C06
+\textbf{\textit{S}} &
+% CELL T06R02C07
+\textbf{\textit{U}} &
+% CELL T06R02C08
+\textbf{HM} &
+% CELL T06R02C09
+\textbf{ZSL} &
+% CELL T06R02C10
+\textbf{\textit{S}} &
+% CELL T06R02C11
+\textbf{\textit{U}} &
+% CELL T06R02C12
+\textbf{HM} &
+% CELL T06R02C13
+\textbf{ZSL} \\
+\midrule
+% CELL T06R03C01
+Initial embeddings ${\boldsymbol{w}}_{c}^{(0)}$ &
+% CELL T06R03C02
+\SGTGnum{19.26} &
+% CELL T06R03C03
+\SGTGnum{9.28} &
+% CELL T06R03C04
+\SGTGnum{12.53} &
+% CELL T06R03C05
+\SGTGnum{9.86} &
+% CELL T06R03C06
+\SGTGnum{40.17} &
+% CELL T06R03C07
+\SGTGnum{35.37} &
+% CELL T06R03C08
+\SGTGnum{37.62} &
+% CELL T06R03C09
+\SGTGnum{37.27} &
+% CELL T06R03C10
+\SGTGnum{20.36} &
+% CELL T06R03C11
+\SGTGnum{16.33} &
+% CELL T06R03C12
+\SGTGnum{18.12} &
+% CELL T06R03C13
+\SGTGnum{17.67} \\
+% CELL T06R04C01
+Separation only ${\mathcal{L}}_{\mathrm{sep}}$ &
+% CELL T06R04C02
+\SGTGnum{24.50} &
+% CELL T06R04C03
+\SGTGnum{12.95} &
+% CELL T06R04C04
+\SGTGnum{16.94} &
+% CELL T06R04C05
+\SGTGnum{16.72} &
+% CELL T06R04C06
+\SGTGnum{78.54} &
+% CELL T06R04C07
+\SGTGnum{34.96} &
+% CELL T06R04C08
+\SGTGnum{48.38} &
+% CELL T06R04C09
+\SGTGnum{41.26} &
+% CELL T06R04C10
+\SGTGnum{48.20} &
+% CELL T06R04C11
+\SGTGnum{20.90} &
+% CELL T06R04C12
+\SGTGnum{29.16} &
+% CELL T06R04C13
+\SGTGnum{21.35} \\
+% CELL T06R05C01
+Margin ranking only ${\mathcal{L}}_{\mathrm{rank}}$ &
+% CELL T06R05C02
+\SGTGnum{20.80} &
+% CELL T06R05C03
+\SGTGnum{12.52} &
+% CELL T06R05C04
+\SGTGnum{15.63} &
+% CELL T06R05C05
+\SGTGnum{14.58} &
+% CELL T06R05C06
+\SGTGnum{74.08} &
+% CELL T06R05C07
+\SGTGnum{43.90} &
+% CELL T06R05C08
+\SGTGnum{55.13} &
+% CELL T06R05C09
+\SGTGnum{43.96} &
+% CELL T06R05C10
+\SGTGnum{33.67} &
+% CELL T06R05C11
+\SGTGnum{21.52} &
+% CELL T06R05C12
+\SGTGnum{26.26} &
+% CELL T06R05C13
+\SGTGnum{24.52} \\
+\midrule
+% CELL T06R06C01
+\textbf{Joint objective }$\mathcal{L}$ &
+% CELL T06R06C02
+\textbf{\SGTGnum{35.08}} &
+% CELL T06R06C03
+\textbf{\SGTGnum{16.87}} &
+% CELL T06R06C04
+\textbf{\SGTGnum{22.78}} &
+% CELL T06R06C05
+\textbf{\SGTGnum{17.65}} &
+% CELL T06R06C06
+\textbf{\SGTGnum{85.49}} &
+% CELL T06R06C07
+\textbf{\SGTGnum{46.97}} &
+% CELL T06R06C08
+\textbf{\SGTGnum{60.63}} &
+% CELL T06R06C09
+\textbf{\SGTGnum{50.38}} &
+% CELL T06R06C10
+\textbf{\SGTGnum{47.28}} &
+% CELL T06R06C11
+\textbf{\SGTGnum{23.61}} &
+% CELL T06R06C12
+\textbf{\SGTGnum{31.49}} &
+% CELL T06R06C13
+\textbf{\SGTGnum{23.96}} \\
+\bottomrule
+\end{tabular*}
+\end{table*}

@@ -1,0 +1,25 @@
+# Only generated/local evidence is excluded; figures and final PDF remain versioned.
+/audit/
+/submission_flat/
+/SGTG_InformationFusion_submission.zip
+/author_review_candidates/
+/stage-state.json
+/git_sync_status.json
+/source/build*/
+/scripts/*
+!/scripts/build_project.py
+!/scripts/prepare_submission.py
+**/__pycache__/
+*.aux
+*.abs
+*.blg
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.xdv
+*.synctex.gz
+*.tmp
+.DS_Store
+Thumbs.db
+# source/main.bbl is intentionally retained; do not ignore all .bbl or .pdf files.

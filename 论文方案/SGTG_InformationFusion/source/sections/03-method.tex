@@ -1,0 +1,244 @@
+% !TeX root = ../main.tex
+
+% DOCX body[24]
+\section{Method}\label{sec:method}
+
+% DOCX body[25]
+\subsection{Problem Definition}\label{sec:problem-definition}
+
+% DOCX body[26]
+In zero-shot learning, classes are divided into two disjoint sets: seen classes and unseen classes. The model is trained only on samples from seen classes, while unseen classes appear only at test time. As a result, it cannot directly learn the data distributions of unseen classes and must instead use class-level semantic information to transfer audio-visual knowledge learned from seen classes. In the more demanding generalized zero-shot setting, test samples come from the union of seen and unseen classes. The model must generalize to unseen classes, retain discrimination among seen classes, and overcome prediction bias toward seen classes. This setting is therefore considered more representative of practical applications. AVGZSL addresses this problem by jointly using the visual and audio content of videos. Although actions and sound events can corroborate one another, their associations with class semantics vary across samples, making seen-to-unseen transfer more challenging. Formally, let ${\mathcal{C}}_{s}$ and ${\mathcal{C}}_{u}$ denote the sets of seen and unseen classes, respectively, with ${\mathcal{C}}_{s}\cap {\mathcal{C}}_{u}=\emptyset .$ The training set contains audio-visual samples from seen classes and is denoted by $\mathcal{S}=\{({x}_{n}^{v},{x}_{n}^{a},{y}_{n}){\}}_{n=1}^{N},$ where ${x}_{n}^{v}$ and ${x}_{n}^{a}$ are the visual and audio streams of training video $n,$ ${y}_{n}\in {\mathcal{C}}_{s}$ is its ground-truth label, and $N$ is the number of training samples. The objective is to learn a decision function $h:({x}^{v},{x}^{a})\mapsto {\mathcal{C}}_{s}\cup {\mathcal{C}}_{u}$ that correctly classifies test samples from the union of seen and unseen classes.
+
+% DOCX body[27]
+\subsection{Overall Architecture}\label{sec:overall-architecture}
+
+% DOCX body[28]
+Most existing AVGZSL methods use class label embeddings for classification in the final matching stage, separating video encoding from class semantics. In contrast, our framework uses discriminatively optimized class embeddings as conditioning signals throughout encoding to guide temporal grounding, interaction, and fusion for both modalities, as illustrated in Fig.~\ref{fig:architecture}. The framework comprises three components: DSPO, CGTA, and DMIF. First, DSPO expands class names into fine-grained descriptions, constructs initial class embeddings, and improves class separability while preserving semantic structure. This component addresses insufficient discrimination in pre-trained text embeddings and ambiguous boundaries between similar classes, providing reliable semantic references for subsequent temporal aggregation and alignment. Second, CGTA introduces the optimized class semantics into visual and audio sequence encoding and uses continuous Gaussian distributions to localize and aggregate class-relevant segments, preventing irrelevant segments from diluting key evidence. Finally, DMIF organizes the selected audio-visual evidence through separate intra-modal and inter-modal relationships and adaptively adjusts their fusion weights to mitigate the interference and modality bias associated with direct concatenation.
+
+% DOCX body[29]
+\input{figures/figure-02-architecture.tex}
+
+% DOCX body[31]
+\subsection{Discriminative Semantic Prototype Optimization}\label{sec:discriminative-semantic-prototype-optimization}
+
+% DOCX body[32]
+Class label embeddings bridge seen and unseen classes in AVGZSL. Embeddings from pre-trained models such as CLIP and CLAP preserve useful semantic relationships. For example, \textquotedblleft{}playing guitar\textquotedblright{} is closer to \textquotedblleft{}playing violin\textquotedblright{} than to \textquotedblleft{}dog barking\textquotedblright{} in semantic space, and such relationships underpin zero-shot transfer. However, these embeddings are not optimized for the target classification task. Class embeddings of semantically similar classes can be too close to distinguish similar actions or sounds. Conversely, maximizing class separability alone tends to push all class embeddings toward an equidistant configuration, erasing the distinction between semantically related and unrelated classes and disrupting the semantic relationships required for transfer. To resolve this conflict, we develop Discriminative Semantic Prototype Optimization (DSPO) based on class embedding optimization \cite{mo2024easy}. Starting from the original text embeddings, DSPO learns class embeddings with improved separability while retaining their semantic relationships. Specifically, it first constructs text embeddings of class descriptions and then jointly optimizes the class embeddings under two competing objectives: class separability and semantic preservation.
+
+% DOCX body[33]
+For class $c,$ let ${\mathcal{P}}_{c}^{v}$ and ${\mathcal{P}}_{c}^{a}$ denote its sets of visual and auditory descriptions, respectively, each containing $P$ descriptions. We pass the two sets through the pre-trained CLIP and CLAP text encoders and stack their outputs row-wise to obtain two matrices of description embeddings, with one encoded description per row:
+
+% DOCX body[34]
+\input{equations/eq-01-visual-description-encoding.tex}
+
+% DOCX body[35]
+\input{equations/eq-02-audio-description-encoding.tex}
+
+% DOCX body[36]
+Here, ${\Phi }_{\mathrm{T}}^{v}(\cdot )$ and ${\Phi }_{\mathrm{T}}^{a}(\cdot )$ denote the frozen CLIP and CLAP text encoders, respectively, and ${d}_{t}^{v}$ and ${d}_{t}^{a}$ are their text-embedding dimensions. At the class level, we apply ${\ell }_{2}$ normalization to each row of ${S}_{c}^{v}$ and ${S}_{c}^{a}$ and average the normalized rows to obtain the modality-specific class label embeddings ${\overline{s}}_{c}^{v}\in {\mathbb{R}}^{{d}_{t}^{v}}$ and ${\overline{s}}_{c}^{a}\in {\mathbb{R}}^{{d}_{t}^{a}}.$ Concatenating and normalizing these embeddings gives the initial class embedding:
+
+% DOCX body[37]
+\input{equations/eq-03-initial-class-embedding.tex}
+
+% DOCX body[38]
+Here, $[\cdot \Vert \cdot ]$ denotes vector concatenation, and ${d}_{s}={d}_{t}^{v}+{d}_{t}^{a}$ is the dimensionality of the class embedding space. Row-wise normalization preserves the directional meaning of the averaged vectors, while global normalization places all class embeddings on the unit sphere, allowing class relationships to be characterized by Euclidean distance.
+
+% DOCX body[39]
+Starting from these initial class embeddings, we optimize a new set of class embeddings $\{{w}_{c}{\}}_{c\in \mathcal{C}},$ where $\mathcal{C}={\mathcal{C}}_{s}\cup {\mathcal{C}}_{u},$ subject to ${\left\Vert {w}_{c}\right\Vert }_{2}=1.$ To enhance class separability, we maximize the distance from each class embedding to its nearest neighbor by minimizing the following class-separation loss:
+
+% DOCX body[40]
+\input{equations/eq-04-separation-loss.tex}
+
+% DOCX body[41]
+The inner $\mathrm{min}$ selects the closest other class embedding to class $c,$ and the outer summation accumulates the loss over all classes. Because the loss acts only on each class\textquoteright{}s nearest neighbor, it prioritizes separation of the most easily confused class pairs. We further introduce a margin ranking loss for semantic preservation that maintains the relative order of distances between the initial class embeddings:
+
+% DOCX body[42]
+\input{equations/eq-05-ranking-loss.tex}
+
+% DOCX body[43]
+Here, $\Delta >0$ is the margin coefficient, and $sign(\cdot )$ is the sign function. The triple summation in \eqref{eq:ranking-loss} scales cubically with the number of classes. For a large class set, it can be approximated by randomly sampling a fixed number of triplets at each update. We jointly optimize the two objectives using a trade-off coefficient:
+
+% DOCX body[44]
+\input{equations/eq-06-prototype-objective.tex}
+
+% DOCX body[45]
+Here, $\alpha \in (0,1)$ balances class separability against semantic preservation. We initialize the class embeddings with ${w}_{c}={w}_{c}^{(0)},$ solve \eqref{eq:prototype-objective} by gradient descent, and renormalize each class embedding onto the unit sphere after every update. Once optimization converges, all class embeddings $\{{w}_{c}\}$ are fixed. The optimized class embeddings serve not only as alignment targets for classification in Section~\ref{sec:joint-embedding-training-and-inference} but also as conditional queries in the next module, guiding the model to actively localize evidence relevant to each candidate class in long audio-visual sequences.
+
+% DOCX body[46]
+\subsection{Class-Conditioned Gaussian Temporal Aggregation}\label{sec:class-conditioned-gaussian-temporal-aggregation}
+
+% DOCX body[47]
+Not every segment of a long video is relevant to its class. In a \textquotedblleft{}wood thrush calling\textquotedblright{} video, for example, the critical bird call may occupy only a small portion of the audio, with environmental noise dominating the remaining duration. Likewise, the decisive action in \textquotedblleft{}basketball dunk\textquotedblright{} occurs only within a short frame interval. Under the conventional class-agnostic global encoding paradigm, uniform pooling dilutes such local evidence with redundant segments. For an unseen class without training samples, class semantics are particularly important for actively searching potentially relevant temporal regions. To address this problem, we propose Class-Conditioned Gaussian Temporal Aggregation (CGTA), which uses optimized class embeddings as encoding conditions rather than only as matching references. It first injects description embeddings into the visual and audio sequences to condition their representations on the candidate class. It then generates multiple continuous Gaussian distributions to independently localize and aggregate class-relevant segments along the two modality timelines. CGTA adapts question-aware fusion and temporal integration of Gaussian experts \cite{kim2025qatiger} by replacing question features with description embeddings and optimized class embeddings.
+
+% DOCX body[48]
+\textbf{Class-semantic-aware early fusion. }We divide each input video into $T$ non-overlapping consecutive temporal segments. Segment $t$ contains a representative image ${x}_{t}^{v}$ and its corresponding audio waveform ${x}_{t}^{a}.$ Frozen pre-trained encoders extract the segment-level visual and audio features:
+
+% DOCX body[49]
+\input{equations/eq-07-visual-feature.tex}
+
+% DOCX body[50]
+\input{equations/eq-08-audio-feature.tex}
+
+% DOCX body[51]
+Here, ${\Phi }_{\mathrm{V}}(\cdot )$ and ${\Phi }_{\mathrm{A}}(\cdot )$ denote the CLIP image and CLAP audio encoders, respectively, while ${d}_{v}$ and ${d}_{a}$ are the corresponding feature dimensions. After stacking the segment features in temporal order to form ${F}^{v}\in {\mathbb{R}}^{T\times {d}_{v}}$ and ${F}^{a}\in {\mathbb{R}}^{T\times {d}_{a}},$ we map them into a shared $d$-dimensional space through two learnable linear projections and add temporal positional encodings:
+
+% DOCX body[52]
+\input{equations/eq-09-feature-projection.tex}
+
+% DOCX body[53]
+Here, ${W}_{v}\in {\mathbb{R}}^{{d}_{v}\times d}$ and ${W}_{a}\in {\mathbb{R}}^{{d}_{a}\times d}$ are projection matrices, and $PE\in {\mathbb{R}}^{T\times d}$ is a learnable temporal positional encoding. The two sequences share the same positional encodings to preserve segment order and maintain temporal alignment across modalities. For consistent notation, we define standard scaled dot-product attention as
+
+% DOCX body[54]
+\input{equations/eq-10-attention.tex}
+
+% DOCX body[55]
+where $X$ supplies the queries and $Y$ supplies both the keys and values, with ${W}_{Q},{W}_{K}\in {\mathbb{R}}^{d\times {d}_{k}}$ and ${W}_{V}\in {\mathbb{R}}^{d\times d}.$ The $\mathrm{Softmax}$ operation normalizes along the key dimension. We denote self-attention by $SA(X)=Attn(X,X)$ and cross-attention by $CA(X,Y)=Attn(X,Y).$
+
+% DOCX body[56]
+We then inject the description embeddings from Section~\ref{sec:discriminative-semantic-prototype-optimization} into the two modality sequences as keys and values. For candidate class $c,$ learnable projections first map the description embeddings to the shared dimensionality: ${\widetilde{S}}_{c}^{v}={S}_{c}^{v}{W}_{s}^{v}\in {\mathbb{R}}^{P\times d}$ and ${\widetilde{S}}_{c}^{a}={S}_{c}^{a}{W}_{s}^{a}\in {\mathbb{R}}^{P\times d},$ where ${W}_{s}^{v}\in {\mathbb{R}}^{{d}_{t}^{v}\times d}$ and ${W}_{s}^{a}\in {\mathbb{R}}^{{d}_{t}^{a}\times d}.$ The class-conditioned sequence encodings are defined as
+
+% DOCX body[57]
+\input{equations/eq-11-conditioned-visual.tex}
+
+% DOCX body[58]
+\input{equations/eq-12-conditioned-audio.tex}
+
+% DOCX body[59]
+where ${H}_{c}^{v},{H}_{c}^{a}\in {\mathbb{R}}^{T\times d}$ denote the visual and audio sequences conditioned on class $c,$ respectively.
+
+% DOCX body[60]
+\textbf{Temporal integration of Gaussian experts. }Given the class-conditioned sequences, we further localize and aggregate class-relevant evidence along the temporal axis. We use Gaussian distributions as soft masks in a Mixture of Experts (MoE) framework, with independent weighted aggregation for audio and visual features. First, the optimized class embedding queries each conditioned sequence to obtain an aggregated representation for each modality conditioned on the candidate class:
+
+% DOCX body[61]
+\input{equations/eq-13-class-queries.tex}
+
+% DOCX body[62]
+Here, $\psi ({w}_{c})={W}_{\psi }{w}_{c}+{b}_{\psi }\in {\mathbb{R}}^{d}$ is a learnable transformation from the ${d}_{s}$-dimensional class embedding space to the shared feature space. Since $\psi ({w}_{c})$ acts as a single-row attention query, the aggregated representations satisfy ${q}_{c}^{v},{q}_{c}^{a}\in {\mathbb{R}}^{d}.$ We then generate distribution parameters for $E$ Gaussian experts in each modality. Using $m\in \{v,a\}$ to index the modality, we define
+
+% DOCX body[63]
+\input{equations/eq-14-gaussian-parameters.tex}
+
+% DOCX body[64]
+\input{equations/eq-15-gaussian-centers-widths.tex}
+
+% DOCX body[65]
+where ${W}_{g}^{m}\in {\mathbb{R}}^{d\times 2E}$ is the parameter-generation matrix. Equation \eqref{eq:gaussian-parameters} divides the $2E$-dimensional output into two equal parts: center offsets ${\delta }^{m}\in {\mathbb{R}}^{E}$ and width parameters ${\varepsilon }^{m}\in {\mathbb{R}}^{E}.$ Here, $k=1,\ldots ,E$ indexes the experts, while ${\mu }_{k}^{m}$ and ${\sigma }_{k}^{m}$ are the Gaussian center and standard deviation of expert $k$ on the normalized temporal axis $[0,1].$ The Gaussian soft mask of expert $k$ at time step $t$ and its temporally normalized form are given by
+
+% DOCX body[66]
+\input{equations/eq-16-gaussian-mask.tex}
+
+% DOCX body[67]
+\input{equations/eq-17-normalized-mask.tex}
+
+% DOCX body[68]
+The mask ${g}_{k,t}^{m}\in \left( 0,1\right] $ peaks at the expert center and decays continuously with temporal distance, while ${\widehat{g}}_{k,t}^{m}$ is normalized along time and sums to $1.$ To determine the contribution of each expert for the current sample and candidate class, a router generates routing values (expert weights) from the aggregated representation:
+
+% DOCX body[69]
+\input{equations/eq-18-expert-routing.tex}
+
+% DOCX body[70]
+Here, ${W}_{r}^{m}\in {\mathbb{R}}^{d\times E}$ is the learnable router weight matrix, and $\mathrm{Softmax}$ normalizes along the expert dimension. The component ${r}_{k}^{m}$ indicates the importance of expert $k.$ Each expert is further equipped with a position-wise linear transformation ${\mathcal{E}}_{k}^{m}:{\mathbb{R}}^{d}\to {\mathbb{R}}^{d},$ and its outputs are integrated in two ways. First, we retain the temporal axis to obtain an enhanced sequence weighted by class relevance:
+
+% DOCX body[71]
+\input{equations/eq-19-enhanced-sequence.tex}
+
+% DOCX body[72]
+Second, we aggregate along time to obtain a compact temporal evidence vector:
+
+% DOCX body[73]
+\input{equations/eq-20-direct-evidence.tex}
+
+% DOCX body[74]
+Here, ${H}_{c,t}^{m}\in {\mathbb{R}}^{d}$ is row $t$ of the conditioned sequence, with ${\widetilde{X}}_{c}^{m}\in {\mathbb{R}}^{T\times d}$ and ${\widetilde{e}}_{c}^{m}\in {\mathbb{R}}^{d}.$ Equation \eqref{eq:direct-evidence} directly summarizes evidence through Gaussian-weighted aggregation without passing through the subsequent masked attention branches. We fuse the temporally aggregated representations of the two modalities into a direct evidence representation:
+
+% DOCX body[75]
+\input{equations/eq-21-direct-av-evidence.tex}
+
+% DOCX body[76]
+Here, ${W}_{e}\in {\mathbb{R}}^{2d\times d}$ and ${b}_{e}\in {\mathbb{R}}^{d}$ are learnable parameters. At this point, candidate-class guidance has produced two enhanced sequences that emphasize class-relevant segments and a robust direct evidence vector.
+
+% DOCX body[77]
+\subsection{Decoupled Modality Interaction and Gated Fusion}\label{sec:decoupled-modality-interaction-and-gated-fusion}
+
+% DOCX body[78]
+Audio and visual content are not always strongly correlated in real-world videos. Visual observations may contain occlusions or irrelevant actions, whereas audio may include background music and environmental noise. Modality dependence also varies across classes: instrument performances require corroboration between sound and movement, while the discriminative information for some classes comes almost entirely from one modality. If the two sequences are fused through indiscriminate global attention, cross-modal attention may propagate irrelevant content as context and cause modality interference. Conversely, a fixed preference for one modality may induce bias toward seen classes and undermine unseen-class generalization. To address these issues, we design Decoupled Modality Interaction and Gated Fusion (DMIF). Following Semi-IIN \cite{lin2025semiinn}, two complementary attention masks implement IntraMA and InterMA in independent branches, while a sample- and class-conditioned gate dynamically adjusts the contributions of intra-modal representations, inter-modal representations, and direct temporal evidence.
+
+% DOCX body[79]
+Specifically, we concatenate the two enhanced sequences with a learnable special token for feature aggregation to form the input to each branch. For branch $b\in \{intra,inter\},$
+
+% DOCX body[80]
+\input{equations/eq-22-branch-input.tex}
+
+% DOCX body[81]
+where ${u}^{b}\in {\mathbb{R}}^{d}$ is a branch-specific learnable special token at position $0.$ Audio tokens occupy positions $1$ through $T,$ and visual tokens occupy positions $T+1$ through $2T.$ Let ${\Omega }_{a}=\{1,\ldots ,T\}$ and ${\Omega }_{v}=\{T+1,\ldots ,2T\}$ denote the audio and visual position sets, respectively. We define the two mask matrices ${M}^{\mathrm{intra}},{M}^{\mathrm{inter}}\in {\mathbb{R}}^{(2T+1)\times (2T+1)}$ as
+
+% DOCX body[82]
+\input{equations/eq-23-intra-mask.tex}
+
+% DOCX body[83]
+\input{equations/eq-24-inter-mask.tex}
+
+% DOCX body[84]
+where $p$ is the query position and $q$ is the key position. Masked attention adds the mask matrix after the scaled dot product and before $\mathrm{Softmax}:$
+
+% DOCX body[85]
+\input{equations/eq-25-masked-attention.tex}
+
+% DOCX body[86]
+Entries set to $-\infty $ receive zero attention weight after $\mathrm{Softmax},$ thereby controlling which positions are visible. Each branch stacks ${L}_{r}$ masked attention units. At layer $l,$ the representation is updated as
+
+% DOCX body[87]
+\input{equations/eq-26-branch-updates.tex}
+
+% DOCX body[88]
+where $LN(\cdot )$ denotes layer normalization, $FFN(\cdot )$ is a two-layer feed-forward network with $\mathrm{ReLU}$ activation, and $l=1,\ldots ,{L}_{r}.$ After ${L}_{r}$ updates, the output at each branch\textquoteright{}s special-token position serves as its representation. Specifically, ${h}_{c}^{\mathrm{intra}}={Z}_{c}^{({L}_{r}),intra}[0]\in {\mathbb{R}}^{d}$ summarizes stable intra-modal cues after Gaussian weighting, whereas ${h}_{c}^{\mathrm{inter}}={Z}_{c}^{({L}_{r}),inter}[0]\in {\mathbb{R}}^{d}$ summarizes complementary corroborating information across the two modalities.
+
+% DOCX body[89]
+For candidate class $c,$ the model now has three evidence representations: the intra-modal representation ${h}_{c}^{\mathrm{intra}},$ the inter-modal representation ${h}_{c}^{\mathrm{inter}},$ and the direct temporal evidence ${\widetilde{e}}_{c}^{av}.$ We therefore construct a dynamic gate conditioned on these representations and the candidate-class embedding:
+
+% DOCX body[90]
+\input{equations/eq-27-three-way-gate.tex}
+
+% DOCX body[91]
+\input{equations/eq-28-gated-fusion.tex}
+
+% DOCX body[92]
+Here, ${W}_{1}\in {\mathbb{R}}^{4d\times d},$ ${W}_{2}\in {\mathbb{R}}^{d\times 3},$ ${b}_{1}\in {\mathbb{R}}^{d},$ and ${b}_{2}\in {\mathbb{R}}^{3}$ are learnable parameters. The $\mathrm{Softmax}$ operation normalizes across the three branches, so $\lambda =({\lambda }_{1},{\lambda }_{2},{\lambda }_{3})$ satisfies ${\lambda }_{1}+{\lambda }_{2}+{\lambda }_{3}=1.$ The vector ${o}_{c}\in {\mathbb{R}}^{d}$ is the fused representation for candidate class $c.$ It combines all evidence that has been selected, organized, and adaptively weighted.
+
+% DOCX body[93]
+\subsection{Joint Embedding, Training, and Inference}\label{sec:joint-embedding-training-and-inference}
+
+% DOCX body[94]
+A two-layer projection network maps the fused representation back into the ${d}_{s}$-dimensional semantic space of the class embeddings:
+
+% DOCX body[95]
+\input{equations/eq-29-semantic-projection.tex}
+
+% DOCX body[96]
+Here, ${W}_{z1}\in {\mathbb{R}}^{d\times d},$ ${W}_{z2}\in {\mathbb{R}}^{d\times {d}_{s}},$ ${b}_{z1}\in {\mathbb{R}}^{d},$ and ${b}_{z2}\in {\mathbb{R}}^{{d}_{s}}$ are learnable parameters. The similarity between sample $x=({x}^{v},{x}^{a})$ and candidate class $c$ is defined as temperature-scaled cosine similarity:
+
+% DOCX body[97]
+\input{equations/eq-30-similarity.tex}
+
+% DOCX body[98]
+Here, $\tau $ is the temperature parameter. Because class embedding ${w}_{c}$ already lies on the unit sphere, it requires no additional normalization. Based on this similarity function, training proceeds in two sequential optimization stages, and inference uses the same scoring rule. The two training objectives are described below.
+
+% DOCX body[99]
+\textbf{Class embedding optimization. }The first-stage objective is given in \eqref{eq:separation-loss}\textendash{}\eqref{eq:prototype-objective}. Starting from the initial class embeddings ${w}_{c}^{(0)},$ we optimize the class embeddings of all classes $\{{w}_{c}\}$ through gradient descent. This stage uses only class names and their textual descriptions; it neither updates network parameters nor uses audio-visual samples. Once convergence is reached, the class embeddings are fixed to provide discriminative, semantically structured conditional queries and alignment targets for the second stage.
+
+% DOCX body[100]
+\textbf{Supervised audio-visual language alignment. }In the second stage, we train the main network using a supervised text-audio-visual contrastive loss inspired by \cite{mo2024easy}. It pulls each training sample\textquoteright{}s class-conditioned embedding toward its ground-truth class embedding and pushes it away from the class embeddings of other seen classes:
+
+% DOCX body[101]
+\input{equations/eq-31-alignment-loss.tex}
+
+% DOCX body[102]
+Here, ${x}_{n}=({x}_{n}^{v},{x}_{n}^{a})$ is training sample $n,$ and ${y}_{n}$ is its ground-truth label. The denominator normalizes over all seen classes ${\mathcal{C}}_{s}.$
+
+% DOCX body[103]
+At inference time, given a test sample $x,$ the model performs a conditioned forward pass for each candidate in ${\mathcal{C}}_{s}\cup {\mathcal{C}}_{u}$ and computes its similarity score. Because classification training uses only seen classes, the scores are biased toward these classes. We apply calibrated stacking \cite{chao2016gzsl} to penalize seen-class scores during inference:
+
+% DOCX body[104]
+\input{equations/eq-32-calibrated-inference.tex}
+
+% DOCX body[105]
+Here, $\mathbb{1}(\cdot )$ is the indicator function, and $\gamma \ge 0$ is the calibration coefficient. This coefficient affects only seen-class scores during inference and does not alter the training procedure.

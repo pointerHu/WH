@@ -1,0 +1,39 @@
+% Stage 3: author identities rechecked against the old author source; see author_reference_review.md.
+% DOCX body[0]: title; original line break converted to whitespace.
+\shorttitle{SGTG \textbar{} Audio-Visual Generalized Zero-Shot Learning}
+\shortauthors{H. Wang et al.}
+\title[mode=title]{SGTG: Semantic-Guided Gaussian Temporal Grounding for Audio-Visual Generalized Zero-Shot Learning}
+\author[1]{Hu Wang}[orcid=0009-0008-1596-5311]
+\ead{gs.wanghu24@gzu.edu.cn}
+\author[1,2]{Jing Yang}[orcid=0000-0003-1915-9487]
+\fnmark[1]
+\cormark[1]
+\ead{jyang23@gzu.edu.cn}
+\author[1]{Xiaoli Ruan}[orcid=0000-0002-7623-3308]
+\ead{xlruan@gzu.edu.cn}
+\author[1]{Yuling Chen}[orcid=0000-0002-8674-8356]
+\ead{ylchen3@gzu.edu.cn}
+\author[3]{Xinru Yi}[orcid=0009-0007-4224-4774]
+\ead{cme.xryi23@gzu.edu.cn}
+\author[4]{Chengjiang Li}[orcid=0000-0002-1864-2023]
+\ead{cjli3@gzu.edu.cn}
+\author[1,2]{Minyi Guo}[orcid=0000-0003-0034-2302]
+\fnmark[2]
+\ead{myguo@gzu.edu.cn}
+\affiliation[1]{organization={State Key Laboratory of Public Big Data, Guizhou University},city={Guiyang},postcode={550025},country={China}}
+\affiliation[2]{organization={Department of Computer Science and Engineering, Shanghai Jiao Tong University},city={Shanghai},postcode={200240},country={China}}
+\affiliation[3]{organization={School of Mechanical Engineering, Guizhou University},city={Guiyang},state={Guizhou},postcode={550025},country={China}}
+\affiliation[4]{organization={School of Management, Guizhou University},city={Guiyang},postcode={550025},country={China}}
+\cortext[1]{Corresponding author}
+% Identities explicitly present in the old author source; current applicability pending confirmation.
+\fntext[1]{Member, IEEE.}
+\fntext[2]{Fellow, IEEE.}
+% No old funding, acknowledgments, CRediT, conflicts, or biographies are copied.
+% DOCX body[1]: complete original abstract, only the displayed label is replaced by the CAS heading.
+\begin{abstract}
+Audio-visual generalized zero-shot learning aims to recognize both seen and unseen classes by jointly exploiting audio, visual, and class-semantic information. Although methods such as AVCA and ClipClap-GZSL have made progress in audio-visual representation learning, discriminative actions or sounds may occur only within short temporal intervals. These cues can be missed during feature sampling or diluted by global aggregation, thereby limiting recognition of unseen classes. Besides, insufficient separation between similar class embeddings, weak audio-visual correspondence, and modality-specific noise further hinder generalization. In this paper, we propose SGTG, a semantic-guided Gaussian temporal grounding framework that uses class semantics as a conditioning signal throughout temporal encoding, modality interaction, and fusion. First, we construct initial class embeddings (class prototypes) from fine-grained visual and auditory descriptions using the CLIP and CLAP text encoders. We then perform class embedding optimization to balance class separability and semantic preservation, providing transferable semantic queries for class-conditioned temporal aggregation. Second, we design a class-conditioned Gaussian temporal aggregation module that conditions audio-visual sequences on class semantics and employs independent Gaussian experts with adaptive routing for each modality. This design continuously localizes and aggregates class-relevant segments along the two temporal axes, reducing the dilution of discriminative evidence by redundant background content. Finally, we decouple intra-modal and inter-modal interactions and introduce a sample- and class-conditioned gate to dynamically combine intra-modal representations, inter-modal representations, and direct temporal evidence. This mechanism suppresses modality interference while retaining complementary information. Experiments on VGGSound-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and ActivityNet-GZSL\textsuperscript{\textit{cls}} show that SGTG outperforms the compared methods in the harmonic mean (HM) of seen- and unseen-class mean class accuracies on all three benchmarks, achieving a better balance between seen-class recognition and unseen-class generalization.
+\end{abstract}
+% DOCX body[2]: all original keywords.
+\begin{keywords}
+Audio-visual zero-shot learning \sep video classification \sep Gaussian temporal aggregation.
+\end{keywords}

@@ -1,0 +1,48 @@
+%% 
+%% Copyright 2019-2024 Elsevier Ltd
+%% 
+%% This file is part of the 'CAS Bundle'.
+%% --------------------------------------
+%% 
+%% It may be distributed under the conditions of the LaTeX Project Public
+%% License, either version 1.3c of this license or (at your option) any
+%% later version.  The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%% 
+%% The list of all files belonging to the 'CAS Bundle' is
+%% given in the file `manifest.txt'.
+%% 
+%% Template article for cas-dc documentclass for 
+%% double column output.
+
+% Adapted for SGTG stage-2 faithful migration. Local XeLaTeX, no journal-compliance claim.
+% !TeX program = xelatex
+\documentclass[a4paper,fleqn]{cas-dc}
+\usepackage[numbers]{natbib}
+\usepackage{cas-xetex-compat}
+\usepackage{sgtg-floats}
+\usepackage{sgtg-final-layout}
+\setlength{\emergencystretch}{3em}
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+% Citation numbers are generated from actual manuscript citations (no forced nocite order).
+\input{frontmatter.tex}
+\maketitle
+\hypersetup{pdfsubject={Audio-visual generalized zero-shot learning manuscript}}
+\input{sections/01-introduction.tex}
+\input{sections/02-related-work.tex}
+\input{sections/03-method.tex}
+\input{sections/04-experiments.tex}
+\FloatBarrier
+\input{sections/05-conclusion.tex}
+% Structured references with source-level identity verification; see stage 3 review.
+\begingroup
+\interlinepenalty=10000
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+\endgroup
+\end{document}

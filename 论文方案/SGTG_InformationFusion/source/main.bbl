@@ -1,0 +1,242 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{parida2020cjme}
+K.~K. Parida, N.~Matiyali, T.~Guha, G.~Sharma, {Coordinated Joint Multimodal
+  Embeddings for Generalized Audio-Visual Zero-shot Classification and
+  Retrieval of Videos}, in: Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision (WACV), 2020, pp. 3251--3260.
+\newblock \href {https://doi.org/10.1109/WACV45572.2020.9093438}
+  {\path{doi:10.1109/WACV45572.2020.9093438}}.
+
+\bibitem{mazumder2021avgzslnet}
+P.~Mazumder, P.~Singh, K.~K. Parida, V.~P. Namboodiri, {AVGZSLNet: Audio-Visual
+  Generalized Zero-Shot Learning by Reconstructing Label Features From
+  Multi-Modal Embeddings}, in: Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision (WACV), 2021, pp. 3090--3099.
+\newblock \href {https://doi.org/10.1109/WACV48630.2021.00313}
+  {\path{doi:10.1109/WACV48630.2021.00313}}.
+
+\bibitem{mercea2022avca}
+O.-B. Mercea, L.~Riesch, A.~S. Koepke, Z.~Akata, {Audio-Visual Generalised
+  Zero-Shot Learning With Cross-Modal Attention and Language}, in: Proceedings
+  of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR),
+  2022, pp. 10553--10563.
+\newblock \href {https://doi.org/10.1109/CVPR52688.2022.01030}
+  {\path{doi:10.1109/CVPR52688.2022.01030}}.
+
+\bibitem{kurzendorfer2024clipclap}
+D.~Kurzend\"{o}rfer, O.-B. Mercea, A.~S. Koepke, Z.~Akata, {Audio-Visual
+  Generalized Zero-Shot Learning using Pre-Trained Large Multi-Modal Models},
+  in: 2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition
+  Workshops (CVPRW), 2024, pp. 2627--2638.
+\newblock \href {https://doi.org/10.1109/CVPRW63382.2024.00269}
+  {\path{doi:10.1109/CVPRW63382.2024.00269}}.
+
+\bibitem{mercea2022tcaf}
+O.-B. Mercea, T.~Hummel, A.~S. Koepke, Z.~Akata, {Temporal and Cross-modal
+  Attention for Audio-Visual Zero-Shot Learning}, in: Computer Vision -- ECCV
+  2022, Springer Nature Switzerland, 2022, pp. 488--505.
+\newblock \href {https://doi.org/10.1007/978-3-031-20044-1_28}
+  {\path{doi:10.1007/978-3-031-20044-1_28}}.
+
+\bibitem{chen2023kda}
+H.~Chen, Y.~Li, Y.~Hong, Z.~Huang, Z.~Xu, Z.~Gu, J.~Lan, H.~Zhu, W.~Wang,
+  \href{https://arxiv.org/abs/2311.12268v2}{{Boosting Audio-visual Zero-shot
+  Learning with Large Language Models}}, arXiv preprint arXiv:2311.12268,
+  version 2, revised 24 April 2024 (2023).
+\newblock \href {https://doi.org/10.48550/arXiv.2311.12268}
+  {\path{doi:10.48550/arXiv.2311.12268}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2311.12268v2}
+
+\bibitem{mo2024easy}
+S.~Mo, P.~Morgado, {Audio-Visual Generalized Zero-Shot Learning the Easy Way},
+  in: Computer Vision -- ECCV 2024, Springer Nature Switzerland, 2024, pp.
+  377--395.
+\newblock \href {https://doi.org/10.1007/978-3-031-73209-6_22}
+  {\path{doi:10.1007/978-3-031-73209-6_22}}.
+
+\bibitem{tsai2019mult}
+Y.-H.~H. Tsai, S.~Bai, P.~P. Liang, J.~Z. Kolter, L.-P. Morency,
+  R.~Salakhutdinov, {Multimodal Transformer for Unaligned Multimodal Language
+  Sequences}, in: Proceedings of the 57th Annual Meeting of the Association for
+  Computational Linguistics, 2019, pp. 6558--6569.
+\newblock \href {https://doi.org/10.18653/v1/p19-1656}
+  {\path{doi:10.18653/v1/p19-1656}}.
+
+\bibitem{nagrani2021bottlenecks}
+A.~Nagrani, S.~Yang, A.~Arnab, A.~Jansen, C.~Schmid, C.~Sun,
+  \href{https://proceedings.neurips.cc/paper_files/paper/2021/file/76ba9f564ebbc35b1014ac498fafadd0-Paper.pdf}{{Attention
+  Bottlenecks for Multimodal Fusion}}, in: Advances in Neural Information
+  Processing Systems, Vol.~34, Curran Associates, Inc., 2021, pp. 14200--14213.
+\newline\urlprefix\url{https://proceedings.neurips.cc/paper_files/paper/2021/file/76ba9f564ebbc35b1014ac498fafadd0-Paper.pdf}
+
+\bibitem{lin2025semiinn}
+J.~Lin, Y.~Wang, Y.~Xu, Q.~Liu, {Semi-IIN: Semi-Supervised Intra-Inter Modal
+  Interaction Learning Network for Multimodal Sentiment Analysis}, Proceedings
+  of the AAAI Conference on Artificial Intelligence 39~(2) (2025) 1411--1419.
+\newblock \href {https://doi.org/10.1609/aaai.v39i2.32131}
+  {\path{doi:10.1609/aaai.v39i2.32131}}.
+
+\bibitem{ma2026famav}
+S.~Ma, X.~Niu, H.~Tang, Z.~Yang, J.~Chu, W.~Li, {Fusion-regularized alignment
+  modality-adaptive audio-visual network for audio-visual zero-shot learning},
+  Neurocomputing 685 (2026) 133693.
+\newblock \href {https://doi.org/10.1016/j.neucom.2026.133693}
+  {\path{doi:10.1016/j.neucom.2026.133693}}.
+
+\bibitem{li2023pstp}
+G.~Li, W.~Hou, D.~Hu, {Progressive Spatio-temporal Perception for Audio-Visual
+  Question Answering}, in: Proceedings of the 31st ACM International Conference
+  on Multimedia, 2023, pp. 7808--7816.
+\newblock \href {https://doi.org/10.1145/3581783.3612293}
+  {\path{doi:10.1145/3581783.3612293}}.
+
+\bibitem{li2024tspm}
+G.~Li, H.~Du, D.~Hu, {Boosting Audio Visual Question Answering via Key
+  Semantic-Aware Cues}, in: Proceedings of the 32nd ACM International
+  Conference on Multimedia, 2024, pp. 5997--6005.
+\newblock \href {https://doi.org/10.1145/3664647.3680803}
+  {\path{doi:10.1145/3664647.3680803}}.
+
+\bibitem{xiao2024trust}
+J.~Xiao, A.~Yao, Y.~Li, T.-S. Chua, {Can I Trust Your Answer? Visually Grounded
+  Video Question Answering}, in: Proceedings of the IEEE/CVF Conference on
+  Computer Vision and Pattern Recognition (CVPR), 2024, pp. 13204--13214.
+\newblock \href {https://doi.org/10.1109/cvpr52733.2024.01254}
+  {\path{doi:10.1109/cvpr52733.2024.01254}}.
+
+\bibitem{kim2025qatiger}
+H.~Kim, I.~Jung, D.~Suh, Y.~Zhang, S.~Lee, S.~Hong, {Question-Aware Gaussian
+  Experts for Audio-Visual Question Answering}, in: Proceedings of the IEEE/CVF
+  Conference on Computer Vision and Pattern Recognition (CVPR), 2025, pp.
+  13681--13690.
+\newblock \href {https://doi.org/10.1109/cvpr52734.2025.01277}
+  {\path{doi:10.1109/cvpr52734.2025.01277}}.
+
+\bibitem{chao2016gzsl}
+W.-L. Chao, S.~Changpinyo, B.~Gong, F.~Sha, {An Empirical Study and Analysis of
+  Generalized Zero-Shot Learning for Object Recognition in the Wild}, in:
+  Computer Vision -- ECCV 2016, 2016, pp. 52--68.
+\newblock \href {https://doi.org/10.1007/978-3-319-46475-6_4}
+  {\path{doi:10.1007/978-3-319-46475-6_4}}.
+
+\bibitem{chen2020vggsound}
+H.~Chen, W.~Xie, A.~Vedaldi, A.~Zisserman, {VGGSound: A Large-Scale
+  Audio-Visual Dataset}, in: ICASSP 2020 - 2020 IEEE International Conference
+  on Acoustics, Speech and Signal Processing (ICASSP), 2020, pp. 721--725.
+\newblock \href {https://doi.org/10.1109/ICASSP40776.2020.9053174}
+  {\path{doi:10.1109/ICASSP40776.2020.9053174}}.
+
+\bibitem{soomro2012ucf101}
+K.~Soomro, A.~R. Zamir, M.~Shah,
+  \href{https://arxiv.org/abs/1212.0402}{{UCF101: A Dataset of 101 Human Action
+  Classes from Videos in the Wild}}, Tech. Rep. CRCV-TR-12-01, University of
+  Central Florida (2012).
+\newline\urlprefix\url{https://arxiv.org/abs/1212.0402}
+
+\bibitem{heilbron2015activitynet}
+F.~Caba~Heilbron, V.~Escorcia, B.~Ghanem, J.~C. Niebles, {ActivityNet: A
+  large-scale video benchmark for human activity understanding}, in: 2015 IEEE
+  Conference on Computer Vision and Pattern Recognition (CVPR), 2015, pp.
+  961--970.
+\newblock \href {https://doi.org/10.1109/CVPR.2015.7298698}
+  {\path{doi:10.1109/CVPR.2015.7298698}}.
+
+\bibitem{kingma2015adam}
+D.~P. Kingma, J.~Ba, \href{https://arxiv.org/abs/1412.6980}{{Adam: A Method for
+  Stochastic Optimization}}, in: Proceedings of the International Conference on
+  Learning Representations (ICLR), 2015.
+\newline\urlprefix\url{https://arxiv.org/abs/1412.6980}
+
+\bibitem{frome2013devise}
+A.~Frome, G.~S. Corrado, J.~Shlens, S.~Bengio, J.~Dean, M.~Ranzato, T.~Mikolov,
+  \href{https://proceedings.neurips.cc/paper_files/paper/2013/file/7cce53cf90577442771720a370c3c723-Paper.pdf}{{DeViSE:
+  A Deep Visual-Semantic Embedding Model}}, in: Advances in Neural Information
+  Processing Systems, Vol.~26, Curran Associates, Inc., 2013, pp. 2121--2129.
+\newline\urlprefix\url{https://proceedings.neurips.cc/paper_files/paper/2013/file/7cce53cf90577442771720a370c3c723-Paper.pdf}
+
+\bibitem{akata2016ale}
+Z.~Akata, F.~Perronnin, Z.~Harchaoui, C.~Schmid, {Label-Embedding for Image
+  Classification}, IEEE Transactions on Pattern Analysis and Machine
+  Intelligence 38~(7) (2016) 1425--1438.
+\newblock \href {https://doi.org/10.1109/TPAMI.2015.2487986}
+  {\path{doi:10.1109/TPAMI.2015.2487986}}.
+
+\bibitem{akata2015sje}
+Z.~Akata, S.~Reed, D.~Walter, H.~Lee, B.~Schiele, {Evaluation of output
+  embeddings for fine-grained image classification}, in: 2015 IEEE Conference
+  on Computer Vision and Pattern Recognition (CVPR), 2015, pp. 2927--2936.
+\newblock \href {https://doi.org/10.1109/CVPR.2015.7298911}
+  {\path{doi:10.1109/CVPR.2015.7298911}}.
+
+\bibitem{xu2020apn}
+W.~Xu, Y.~Xian, J.~Wang, B.~Schiele, Z.~Akata,
+  \href{https://proceedings.neurips.cc/paper_files/paper/2020/file/fa2431bf9d65058fe34e9713e32d60e6-Paper.pdf}{{Attribute
+  Prototype Network for Zero-Shot Learning}}, in: Advances in Neural
+  Information Processing Systems, Vol.~33, Curran Associates, Inc., 2020, pp.
+  21969--21980.
+\newline\urlprefix\url{https://proceedings.neurips.cc/paper_files/paper/2020/file/fa2431bf9d65058fe34e9713e32d60e6-Paper.pdf}
+
+\bibitem{xian2019fvaegan}
+Y.~Xian, S.~Sharma, B.~Schiele, Z.~Akata, {F-VAEGAN-D2: A Feature Generating
+  Framework for Any-Shot Learning}, in: Proceedings of the IEEE/CVF Conference
+  on Computer Vision and Pattern Recognition (CVPR), 2019, pp. 10275--10284.
+\newblock \href {https://doi.org/10.1109/CVPR.2019.01052}
+  {\path{doi:10.1109/CVPR.2019.01052}}.
+
+\bibitem{hong2023hyperbolic}
+J.~Hong, Z.~Hayder, J.~Han, P.~Fang, M.~Harandi, L.~Petersson, {Hyperbolic
+  Audio-visual Zero-shot Learning}, in: Proceedings of the IEEE/CVF
+  International Conference on Computer Vision (ICCV), 2023, pp. 7873--7883.
+\newblock \href {https://doi.org/10.1109/ICCV51070.2023.00724}
+  {\path{doi:10.1109/ICCV51070.2023.00724}}.
+
+\bibitem{li2024stft}
+W.~Li, P.~Wang, R.~Xiong, X.~Fan, {Spiking Tucker Fusion Transformer for
+  Audio-Visual Zero-Shot Learning}, IEEE Transactions on Image Processing 33
+  (2024) 4840--4852.
+\newblock \href {https://doi.org/10.1109/TIP.2024.3430080}
+  {\path{doi:10.1109/TIP.2024.3430080}}.
+
+\bibitem{yang2025mstr}
+Z.~Yang, W.~Li, J.~Hou, G.~Cheng, {Multi-modal spiking tensor regression
+  network for audio-visual zero-shot learning}, Neurocomputing 629 (2025)
+  129636.
+\newblock \href {https://doi.org/10.1016/j.neucom.2025.129636}
+  {\path{doi:10.1016/j.neucom.2025.129636}}.
+
+\bibitem{li2025mdst}
+W.~Li, P.~Wang, X.~Wang, W.~Zuo, X.~Fan, Y.~Tian, {Multi-Timescale
+  Motion-Decoupled Spiking Transformer for Audio-Visual Zero-Shot Learning},
+  IEEE Transactions on Circuits and Systems for Video Technology 35~(11) (2025)
+  10772--10786.
+\newblock \href {https://doi.org/10.1109/TCSVT.2025.3574499}
+  {\path{doi:10.1109/TCSVT.2025.3574499}}.
+
+\bibitem{yang2026sacma}
+J.~Yang, X.~Li, Y.~Wu, Y.~Chen, X.~Ruan, C.~Li, Q.~Hou, {Self-attention and
+  cross-modal attention for audio-visual zero-shot learning}, Information
+  Fusion 129 (2026) 103966.
+\newblock \href {https://doi.org/10.1016/j.inffus.2025.103966}
+  {\path{doi:10.1016/j.inffus.2025.103966}}.
+
+\bibitem{ma2026sgpan}
+S.~Ma, W.~Li, H.~Tang, Y.~Chai, J.~Chu, X.~Wang, {Semantic-Guided
+  Pseudo-Feature Attention Network for Audio-Visual Zero-Shot Learning}, in:
+  ICASSP 2026 - 2026 IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP), 2026, pp. 12497--12501.
+\newblock \href {https://doi.org/10.1109/icassp55912.2026.11463644}
+  {\path{doi:10.1109/icassp55912.2026.11463644}}.
+
+\bibitem{maaten2008tsne}
+L.~van~der Maaten, G.~Hinton,
+  \href{https://jmlr.org/papers/v9/vandermaaten08a.html}{{Visualizing Data
+  using t-SNE}}, Journal of Machine Learning Research 9~(86) (2008) 2579--2605.
+\newline\urlprefix\url{https://jmlr.org/papers/v9/vandermaaten08a.html}
+
+\end{thebibliography}
