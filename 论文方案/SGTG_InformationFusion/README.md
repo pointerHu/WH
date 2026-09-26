@@ -52,3 +52,49 @@ python -X utf8 scripts/prepare_submission.py --source-build build-review
 本次未推送至公开远程：新稿公开授权尚未给出。当前本地提交详情和远程核验记录保存在 `git_sync_status.json`（本地文件，不作为投稿材料）。具体待确认项见 TODO.md。
 
 标题页已采用 CAS 常规前置信息布局，页脚使用“Manuscript prepared for Information Fusion”，不宣称已经投稿。既有模板警告、密集图例清晰度及未确认内容均在 QA_REPORT.md 中如实记录。
+
+## 当前更新：2026-09-24 投稿附件与声明
+
+用户已确定使用当前CAS-DC模板。本轮新增 `source/sections/06-declarations.tex`，包含用户提供的五人CRediT、授权复用的旧稿资助，以及给定利益冲突声明。七人作者区、原正文、摘要和全部实验数字不变。数据共享与AI声明暂缓。
+
+五份独立Word附件位于 `submission_materials/`，详见该目录README。Cover Letter为七问草稿，前六问完成，第七问需要前序发表/关联稿件及作者批准事实；CRediT文件标为PARTIAL，因为Xinru Yi和Minyi Guo角色尚未提供。不能将这两个文件视为无待确认项的正式附件。
+
+本轮实际构建目录为 `source/build-stage6-20260924/`；根目录PDF与源码ZIP已更新，15页，包含72个扁平化源文件。旧交付物保留于 `audit/stage6/before/`。本轮核验以 `audit/stage6/verification.json` 和 `QA_REPORT.md` 第9节为准；前文r4构建路径是历史记录。
+
+日常仍使用 `scripts/build_project.py --out <source内的输出目录名> --full`，明确调用本地XeLaTeX和BibTeX。下次重新生成源包前，应先检查归档同名生成物；源码ZIP只包含排版工程，独立投稿Word文件需另行管理。封面信草稿和数据/AI待办没有混入源码ZIP。
+
+本轮没有新增Git提交或推送，新的文件变更仅在本地，不能认为已包含在此前提交中。独立利益冲突Word文件按用户原文准备，尚未操作官方Declarations tool或投稿系统。
+
+
+## 第七阶段更新（2026-09-25）
+
+Funding标题按要求改为Acknowledgement；资助正文及编号不变。表2–表9按各数据集的每个指标列最高值加粗，96列核验通过，20个数值格调整字重；不再整行强调本方法。表2的19个基线添加实际引用版本的期刊/会议/平台及年份。
+
+全部814个物理格的内容核对通过；608个渲染数字原字串不变，576个指标字重逐项从PDF字体资源核验。原正文、作者、公式、图注、实验数值和文献库未改。当前主PDF仍15页；主工程与扁平目录均已在VOA XeLaTeX+BibTeX独立构建通过，ZIP已更新。详见STAGE7_CHANGELOG.md和audit/stage7/。
+
+当前构建目录source/build-stage7-20260925。此次只保存本地，不提交或推送；数据和AI范围仍暂缓。
+
+
+## 第八阶段更新：表后Note与图3（2026-09-25）
+
+删除8条表后Note及对应宏，保持全部数值、最高值粗体和方法出处。4.4第二段已转为图3图注，正文删除重复段落，保留的第一段增加自动图3引用。图3改用用户提供的tsne.pdf矢量原文件，项目副本与原文件逐字节一致；原PNG仅留审计备份，不再打入源包。
+
+当前PDF仍15页，图3在第13页；source/build-stage8-20260925和独立扁平目录均由VOA的XeLaTeX+BibTeX成功编译。814格、608个PDF数字、576个指标字重核验通过，原74个正文/列表内容单元为73个正文加1个移至图注；未改实验数据。详情见STAGE8_CHANGELOG.md及audit/stage8/。
+
+## 第九阶段更新（2026-09-25）：where、公式(5)/(27)、AVFS
+
+最新主构建：source/build-stage9-final-20260925/。交付入口不变，参考文献现33篇，AVFS [26]已补入。修改范围与证据见STAGE9_CHANGELOG.md及audit/stage9/；独立Word材料保持原状。
+
+## 第十阶段当前排版（2026-09-25）
+
+当前主PDF为16页，最终构建目录source/build-stage10-r4。source/sgtg-page-layout.sty使用原CAS表题和图注函数，在sections/04-experiments.tex以SGTGPageTop组织页顶分组。表格自身仍位于tables/并保持可编辑；附加依赖balance已经存在于VOA TeX Live中，无须新安装或全局配置。后续增删正文或表格后，应重新检查这些分页分组，不仅替换PDF。当前图3在第14页，表2在第10页。
+
+
+## 2026-09-25 第十一阶段：文字连续排版
+
+已去除第8页起的人为分页和逐页短栏平衡。表1至表9仍位于第9至13页页顶，分组不变；图3仍位于第14页。文字连续接排，最终15页。第1–7页内容和版式保持，仅页脚总页数自动更新。正文、公式、图表、声明与文献没有改写。第8–15页实际查看，主工程与扁平稿15页渲染逐像素一致。详细说明见 STAGE11_CHANGELOG.md 和 audit/stage11/；构建日志 source/build-stage11-r1/console.log。
+
+页顶图表计划集中在 source/page-top-plan.tex；正文不再调用 SGTGPageTop 或 balance。后续正文长度变化时仍需重新核验图文页序，不要恢复按段落强制分页。
+
+
+2026-09-25：当前封面信为submission_materials/SGTG_Cover_Letter.docx和SGTG_Cover_Letter.md；完整七问，无前序发表已由作者确认。旧DRAFT保留为历史来源。本次未改变论文或源包。

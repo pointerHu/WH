@@ -1,0 +1,54 @@
+% Project-local page-top panels. Original CAS class/captions remain unchanged.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sgtg-page-layout}[2026/09/25 Scheduled panels with continuous text]
+\RequirePackage{etoolbox}
+\ExplSyntaxOn
+\NewDocumentEnvironment{SGTGtablepanel}{O{width=\textwidth}}
+  {\begin{minipage}{\textwidth}
+   \__reset_tbl:
+   \dim_set:Nn \l_tbl_width_dim {\textwidth}
+   \keys_set:nn {cas/tbl}{#1}
+   \cs_set:Npn \@captype {table}
+   \cs_set_eq:NN \@makecaption \__make_tbl_caption:nn
+   \cs_set:Npx \tblwidth {\dim_use:N \l_tbl_width_dim}
+   \centering\sffamily\small}
+  {\end{minipage}\par\vspace{10pt}}
+\NewDocumentEnvironment{SGTGfigurepanel}{O{width=\textwidth}}
+  {\begin{minipage}{\textwidth}
+   \__reset_fig:
+   \dim_set:Nn \l_fig_width_dim {\textwidth}
+   \keys_set:nn {cas/fig}{#1}
+   \cs_set:Npn \@captype {figure}
+   \cs_set_eq:NN \@makecaption \__make_fig_caption:nn
+   \cs_set:Npx \figwidth {\dim_use:N \l_fig_width_dim}
+   \centering\sffamily\small}
+  {\end{minipage}\par\vspace{8pt}}
+\ExplSyntaxOff
+% Install a page-top panel only when the normal two-column output reaches that page.
+% There are no manuscript-body page breaks or separately balanced text segments.
+\makeatletter
+\newcommand{\SGTGAtPage}[2]{\expandafter\gdef\csname SGTG@panel@#1\endcsname{#2}}
+\newcommand{\SGTG@renderpanel}[1]{%
+  \begingroup
+    \RenewDocumentEnvironment{table*}{O{width=\textwidth}}
+      {\begin{SGTGtablepanel}[##1]}{\end{SGTGtablepanel}}%
+    \RenewDocumentEnvironment{figure*}{O{width=\textwidth}}
+      {\begin{SGTGfigurepanel}[##1]}{\end{SGTGfigurepanel}}%
+    #1\endgroup}
+\newcommand{\SGTG@nextpanel}{%
+  \if@fcolmade\else
+    \ifcsname SGTG@panel@\number\c@page\endcsname
+      \ifcsname SGTG@used@\number\c@page\endcsname\else
+        \expandafter\gdef\csname SGTG@used@\number\c@page\endcsname{1}%
+        \ifx\@dbltoplist\@empty\else
+          \PackageError{sgtg-page-layout}{Scheduled panel overlaps deferred floats}{}%
+        \fi
+        \@topnewpage[{\SGTG@renderpanel{\csname SGTG@panel@\number\c@page\endcsname}}]%
+        \typeout{SGTG scheduled panel page \thepage; text height \the\@colht}%
+      \fi
+    \fi
+  \fi}
+\apptocmd{\@startdblcolumn}{\SGTG@nextpanel}{}
+  {\PackageError{sgtg-page-layout}{Cannot attach continuous-flow page scheduler}{}}
+\makeatother
+\endinput

@@ -1,5 +1,7 @@
-% DOCX body[42]; M035
+% DOCX body[42]; M035. Equivalent notation; distances/sign defined in body[41].
+\begingroup\postdisplaypenalty=10000
 \begin{equation}
 \label{eq:ranking-loss}
-\begin{gathered}{\mathcal{L}}_{rank}=\sum _{c\in \mathcal{C}}\sum _{\begin{array}{c}i,j\in \mathcal{C}\\i\ne j,i\ne c,j\ne c\end{array}}\mathrm{max}\{0,\Delta \\\quad -sign\left( {\left\Vert {w}_{c}^{(0)}-{w}_{i}^{(0)}\right\Vert }_{2}-{\left\Vert {w}_{c}^{(0)}-{w}_{j}^{(0)}\right\Vert }_{2}\right) \\\quad \cdot \left( {\left\Vert {w}_{c}-{w}_{i}\right\Vert }_{2}-{\left\Vert {w}_{c}-{w}_{j}\right\Vert }_{2}\right) \}\end{gathered}
+\mathcal{L}_{rank}=\sum_{(c,i,j)\in\mathcal{T}}\max\bigl\{0,\Delta-\eta_{cij}(d_{ci}-d_{cj})\bigr\}.
 \end{equation}
+\endgroup

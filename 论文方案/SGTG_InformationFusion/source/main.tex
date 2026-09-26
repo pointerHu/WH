@@ -24,7 +24,9 @@
 \usepackage{cas-xetex-compat}
 \usepackage{sgtg-floats}
 \usepackage{sgtg-final-layout}
+\usepackage{sgtg-page-layout}
 \setlength{\emergencystretch}{3em}
+\input{page-top-plan.tex}
 \begin{document}
 \let\WriteBookmarks\relax
 \def\floatpagepagefraction{1}
@@ -37,8 +39,8 @@
 \input{sections/02-related-work.tex}
 \input{sections/03-method.tex}
 \input{sections/04-experiments.tex}
-\FloatBarrier
 \input{sections/05-conclusion.tex}
+\input{sections/06-declarations.tex}
 % Structured references with source-level identity verification; see stage 3 review.
 \begingroup
 \interlinepenalty=10000

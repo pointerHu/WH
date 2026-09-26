@@ -97,3 +97,28 @@ CSV 文件本身保留例如 10.30、24.50 的字面值。用 Excel/WPS 查看�
 核心证据：`audit/stage4/verification.json`、`table-cells.json`、`pdf-numeric-rows.json`、`caption-checks.json`、`positions.json`、`visual-regression.json` 和 `visual-review.md`。剩余确认项集中在 `figure_table_remaining.md`。
 
 本阶段只保存本地。Git 分支、历史和远程不变，不执行 git add/commit/push，也不进行正式投稿。
+
+
+## 第七阶段更新（2026-09-25）
+
+Funding标题按要求改为Acknowledgement；资助正文及编号不变。表2–表9按各数据集的每个指标列最高值加粗，96列核验通过，20个数值格调整字重；不再整行强调本方法。表2的19个基线添加实际引用版本的期刊/会议/平台及年份。
+
+全部814个物理格的内容核对通过；608个渲染数字原字串不变，576个指标字重逐项从PDF字体资源核验。原正文、作者、公式、图注、实验数值和文献库未改。当前主PDF仍15页；主工程与扁平目录均已在VOA XeLaTeX+BibTeX独立构建通过，ZIP已更新。详见STAGE7_CHANGELOG.md和audit/stage7/。
+
+当前构建目录source/build-stage7-20260925。此次只保存本地，不提交或推送；数据和AI范围仍暂缓。
+
+
+## 第八阶段更新：表后Note与图3（2026-09-25）
+
+删除8条表后Note及对应宏，保持全部数值、最高值粗体和方法出处。4.4第二段已转为图3图注，正文删除重复段落，保留的第一段增加自动图3引用。图3改用用户提供的tsne.pdf矢量原文件，项目副本与原文件逐字节一致；原PNG仅留审计备份，不再打入源包。
+
+当前PDF仍15页，图3在第13页；source/build-stage8-20260925和独立扁平目录均由VOA的XeLaTeX+BibTeX成功编译。814格、608个PDF数字、576个指标字重核验通过，原74个正文/列表内容单元为73个正文加1个移至图注；未改实验数据。详情见STAGE8_CHANGELOG.md及audit/stage8/。
+
+## 第十阶段当前排版（2026-09-25）
+
+当前主PDF为16页，最终构建目录source/build-stage10-r4。source/sgtg-page-layout.sty使用原CAS表题和图注函数，在sections/04-experiments.tex以SGTGPageTop组织页顶分组。表格自身仍位于tables/并保持可编辑；附加依赖balance已经存在于VOA TeX Live中，无须新安装或全局配置。后续增删正文或表格后，应重新检查这些分页分组，不仅替换PDF。当前图3在第14页，表2在第10页。
+
+
+## 2026-09-25 第十一阶段：文字连续排版
+
+已去除第8页起的人为分页和逐页短栏平衡。表1至表9仍位于第9至13页页顶，分组不变；图3仍位于第14页。文字连续接排，最终15页。第1–7页内容和版式保持，仅页脚总页数自动更新。正文、公式、图表、声明与文献没有改写。第8–15页实际查看，主工程与扁平稿15页渲染逐像素一致。详细说明见 STAGE11_CHANGELOG.md 和 audit/stage11/；构建日志 source/build-stage11-r1/console.log。

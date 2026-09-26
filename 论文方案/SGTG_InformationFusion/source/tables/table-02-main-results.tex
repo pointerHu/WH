@@ -4,7 +4,8 @@
 \caption{Performance comparison on the three benchmark datasets (\%).}
 \label{tab:main-results}
 \SGTGtableSetup
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{0.25\textwidth}*{4}{c}!{\hspace{0.65em}}*{4}{c}!{\hspace{0.65em}}*{4}{c}@{}}
+\setlength{\tabcolsep}{1.8pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright\arraybackslash}p{0.30\textwidth}*{4}{c}!{\hspace{0.65em}}*{4}{c}!{\hspace{0.65em}}*{4}{c}@{}}
 \toprule
 % CELL T02R01C01
 \multirow{2}{*}{\textbf{Method}} &
@@ -43,7 +44,7 @@
 \textbf{ZSL} \\
 \midrule
 % CELL T02R03C01
-DeViSE \cite{frome2013devise} &
+DeViSE \cite{frome2013devise} \SGTGvenue{NeurIPS'13} &
 % CELL T02R03C02
 \SGTGnum{36.22} &
 % CELL T02R03C03
@@ -69,7 +70,7 @@ DeViSE \cite{frome2013devise} &
 % CELL T02R03C13
 \SGTGnum{8.53} \\
 % CELL T02R04C01
-ALE \cite{akata2016ale} &
+ALE \cite{akata2016ale} \SGTGvenue{TPAMI'16} &
 % CELL T02R04C02
 \SGTGnum{0.28} &
 % CELL T02R04C03
@@ -95,9 +96,9 @@ ALE \cite{akata2016ale} &
 % CELL T02R04C13
 \SGTGnum{7.90} \\
 % CELL T02R05C01
-SJE \cite{akata2015sje} &
+SJE \cite{akata2015sje} \SGTGvenue{CVPR'15} &
 % CELL T02R05C02
-\SGTGnum{48.33} &
+\textbf{\SGTGnum{48.33}} &
 % CELL T02R05C03
 \SGTGnum{1.10} &
 % CELL T02R05C04
@@ -121,7 +122,7 @@ SJE \cite{akata2015sje} &
 % CELL T02R05C13
 \SGTGnum{7.08} \\
 % CELL T02R06C01
-f-VAEGAN-D2 \cite{xian2019fvaegan} &
+f-VAEGAN-D2 \cite{xian2019fvaegan} \SGTGvenue{CVPR'19} &
 % CELL T02R06C02
 \SGTGnum{12.77} &
 % CELL T02R06C03
@@ -147,7 +148,7 @@ f-VAEGAN-D2 \cite{xian2019fvaegan} &
 % CELL T02R06C13
 \SGTGnum{2.40} \\
 % CELL T02R07C01
-APN \cite{xu2020apn} &
+APN \cite{xu2020apn} \SGTGvenue{NeurIPS'20} &
 % CELL T02R07C02
 \SGTGnum{7.48} &
 % CELL T02R07C03
@@ -173,7 +174,7 @@ APN \cite{xu2020apn} &
 % CELL T02R07C13
 \SGTGnum{6.34} \\
 % CELL T02R08C01
-CJME \cite{parida2020cjme} &
+CJME \cite{parida2020cjme} \SGTGvenue{WACV'20} &
 % CELL T02R08C02
 \SGTGnum{11.96} &
 % CELL T02R08C03
@@ -199,7 +200,7 @@ CJME \cite{parida2020cjme} &
 % CELL T02R08C13
 \SGTGnum{9.92} \\
 % CELL T02R09C01
-AVGZSLNet \cite{mazumder2021avgzslnet} &
+AVGZSLNet \cite{mazumder2021avgzslnet} \SGTGvenue{WACV'21} &
 % CELL T02R09C02
 \SGTGnum{13.02} &
 % CELL T02R09C03
@@ -225,7 +226,7 @@ AVGZSLNet \cite{mazumder2021avgzslnet} &
 % CELL T02R09C13
 \SGTGnum{12.39} \\
 % CELL T02R10C01
-AVCA \cite{mercea2022avca} &
+AVCA \cite{mercea2022avca} \SGTGvenue{CVPR'22} &
 % CELL T02R10C02
 \SGTGnum{32.47} &
 % CELL T02R10C03
@@ -251,7 +252,7 @@ AVCA \cite{mercea2022avca} &
 % CELL T02R10C13
 \SGTGnum{20.88} \\
 % CELL T02R11C01
-TCaF \cite{mercea2022tcaf} &
+TCaF \cite{mercea2022tcaf} \SGTGvenue{ECCV'22} &
 % CELL T02R11C02
 \SGTGnum{12.63} &
 % CELL T02R11C03
@@ -277,7 +278,7 @@ TCaF \cite{mercea2022tcaf} &
 % CELL T02R11C13
 \SGTGnum{7.96} \\
 % CELL T02R12C01
-AVFS &
+AVFS \cite{zheng2023avfs} \SGTGvenue{IJCNN'23} &
 % CELL T02R12C02
 \SGTGnum{15.62} &
 % CELL T02R12C03
@@ -303,7 +304,7 @@ AVFS &
 % CELL T02R12C13
 \SGTGnum{9.15} \\
 % CELL T02R13C01
-Hyper-multiple \cite{hong2023hyperbolic} &
+Hyper-multiple \cite{hong2023hyperbolic} \SGTGvenue{ICCV'23} &
 % CELL T02R13C02
 \SGTGnum{21.99} &
 % CELL T02R13C03
@@ -329,7 +330,7 @@ Hyper-multiple \cite{hong2023hyperbolic} &
 % CELL T02R13C13
 \SGTGnum{22.18} \\
 % CELL T02R14C01
-KDA \cite{chen2023kda} &
+KDA \cite{chen2023kda} \SGTGvenue{arXiv'23} &
 % CELL T02R14C02
 \SGTGnum{13.30} &
 % CELL T02R14C03
@@ -355,7 +356,7 @@ KDA \cite{chen2023kda} &
 % CELL T02R14C13
 \SGTGnum{11.85} \\
 % CELL T02R15C01
-STFT \cite{li2024stft} &
+STFT \cite{li2024stft} \SGTGvenue{TIP'24} &
 % CELL T02R15C02
 \SGTGnum{11.74} &
 % CELL T02R15C03
@@ -381,7 +382,7 @@ STFT \cite{li2024stft} &
 % CELL T02R15C13
 \SGTGnum{9.46} \\
 % CELL T02R16C01
-ClipClap-GZSL \cite{kurzendorfer2024clipclap} &
+ClipClap-GZSL \cite{kurzendorfer2024clipclap} \SGTGvenue{CVPRW'24} &
 % CELL T02R16C02
 \SGTGnum{27.59} &
 % CELL T02R16C03
@@ -407,7 +408,7 @@ ClipClap-GZSL \cite{kurzendorfer2024clipclap} &
 % CELL T02R16C13
 \SGTGnum{21.76} \\
 % CELL T02R17C01
-EZ-AVGZL \cite{mo2024easy} &
+EZ-AVGZL \cite{mo2024easy} \SGTGvenue{ECCV'24} &
 % CELL T02R17C02
 \SGTGnum{17.26} &
 % CELL T02R17C03
@@ -433,7 +434,7 @@ EZ-AVGZL \cite{mo2024easy} &
 % CELL T02R17C13
 \SGTGnum{13.01} \\
 % CELL T02R18C01
-MSTR \cite{yang2025mstr} &
+MSTR \cite{yang2025mstr} \SGTGvenue{Neurocomputing'25} &
 % CELL T02R18C02
 \SGTGnum{13.70} &
 % CELL T02R18C03
@@ -443,7 +444,7 @@ MSTR \cite{yang2025mstr} &
 % CELL T02R18C05
 \SGTGnum{6.38} &
 % CELL T02R18C06
-\SGTGnum{86.32} &
+\textbf{\SGTGnum{86.32}} &
 % CELL T02R18C07
 \SGTGnum{19.97} &
 % CELL T02R18C08
@@ -459,7 +460,7 @@ MSTR \cite{yang2025mstr} &
 % CELL T02R18C13
 \SGTGnum{9.65} \\
 % CELL T02R19C01
-MDST++ \cite{li2025mdst} &
+MDST++ \cite{li2025mdst} \SGTGvenue{TCSVT'25} &
 % CELL T02R19C02
 \SGTGnum{12.21} &
 % CELL T02R19C03
@@ -475,7 +476,7 @@ MDST++ \cite{li2025mdst} &
 % CELL T02R19C08
 \SGTGnum{53.14} &
 % CELL T02R19C09
-\SGTGnum{55.22} &
+\textbf{\SGTGnum{55.22}} &
 % CELL T02R19C10
 \SGTGnum{27.53} &
 % CELL T02R19C11
@@ -485,7 +486,7 @@ MDST++ \cite{li2025mdst} &
 % CELL T02R19C13
 \SGTGnum{13.12} \\
 % CELL T02R20C01
-SACMA \cite{yang2026sacma} &
+SACMA \cite{yang2026sacma} \SGTGvenue{Inf. Fusion'26} &
 % CELL T02R20C02
 \SGTGnum{13.42} &
 % CELL T02R20C03
@@ -511,7 +512,7 @@ SACMA \cite{yang2026sacma} &
 % CELL T02R20C13
 \SGTGnum{7.52} \\
 % CELL T02R21C01
-SGPAN \cite{ma2026sgpan} &
+SGPAN \cite{ma2026sgpan} \SGTGvenue{ICASSP'26} &
 % CELL T02R21C02
 \SGTGnum{18.03} &
 % CELL T02R21C03
@@ -538,9 +539,9 @@ SGPAN \cite{ma2026sgpan} &
 \SGTGnum{7.90} \\
 \midrule
 % CELL T02R22C01
-\textbf{SGTG} &
+SGTG &
 % CELL T02R22C02
-\textbf{\SGTGnum{35.08}} &
+\SGTGnum{35.08} &
 % CELL T02R22C03
 \textbf{\SGTGnum{16.87}} &
 % CELL T02R22C04
@@ -548,13 +549,13 @@ SGPAN \cite{ma2026sgpan} &
 % CELL T02R22C05
 \textbf{\SGTGnum{17.65}} &
 % CELL T02R22C06
-\textbf{\SGTGnum{85.49}} &
+\SGTGnum{85.49} &
 % CELL T02R22C07
 \textbf{\SGTGnum{46.97}} &
 % CELL T02R22C08
 \textbf{\SGTGnum{60.63}} &
 % CELL T02R22C09
-\textbf{\SGTGnum{50.38}} &
+\SGTGnum{50.38} &
 % CELL T02R22C10
 \textbf{\SGTGnum{47.28}} &
 % CELL T02R22C11

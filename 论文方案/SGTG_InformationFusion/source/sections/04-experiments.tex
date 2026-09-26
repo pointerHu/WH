@@ -13,10 +13,10 @@
 We evaluate AVGZSL performance on three benchmarks: VGGSound-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and ActivityNet-GZSL\textsuperscript{\textit{cls}}. VGGSound-GZSL\textsuperscript{\textit{cls}} is constructed from VGGSound \cite{chen2020vggsound} and contains 276 classes, initially divided into 138 seen and 138 unseen classes. It covers diverse scenes involving animals, households, music, nature, people, sports, tools, and vehicles. UCF-GZSL\textsuperscript{\textit{cls}} is derived from the UCF101 action-recognition dataset \cite{soomro2012ucf101} and contains 51 classes, initially divided into 30 seen and 21 unseen classes. Its daily activities and sports include fencing, playing the piano, and diving. ActivityNet-GZSL\textsuperscript{\textit{cls}} is based on ActivityNet \cite{heilbron2015activitynet} and contains 200 daily-activity classes, initially divided into 99 seen and 101 unseen classes. Its longer videos and complex scenes pose additional challenges for temporal grounding and audio-visual fusion.
 
 % DOCX body[110]
-Table~\ref{tab:class-splits} summarizes the class splits. Here, $C$ denotes the total number of classes, and ${C}_{s}$ and ${C}_{u}$ denote the numbers of seen and unseen classes in the initial split. The notation ${\mathrm{Tr}}_{s}$ denotes the number of seen training classes; ${\mathrm{Val}}_{s}$ and ${\mathrm{Val}}_{u}$ denote the numbers of seen and unseen validation classes, respectively; and ${\mathrm{Te}}_{s}$ and ${\mathrm{Te}}_{u}$ denote the numbers of seen and unseen test classes, respectively.
+Table~\ref{tab:class-splits} summarizes the class splits, where $C$ denotes the total number of classes, and ${C}_{s}$ and ${C}_{u}$ denote the numbers of seen and unseen classes in the initial split. The notation ${\mathrm{Tr}}_{s}$ denotes the number of seen training classes; ${\mathrm{Val}}_{s}$ and ${\mathrm{Val}}_{u}$ denote the numbers of seen and unseen validation classes, respectively; and ${\mathrm{Te}}_{s}$ and ${\mathrm{Te}}_{u}$ denote the numbers of seen and unseen test classes, respectively.
 
 % DOCX body[112]
-\input{tables/table-01-class-splits.tex}
+% Table 1 is scheduled in a page-top panel.
 
 % DOCX body[114]
 Training and evaluation follow a two-stage protocol, denoted Stage I and Stage II. The unseen validation classes in Stage I are incorporated into the training set in Stage II and thus become seen classes at that stage. For final testing, the numbers of seen/unseen classes are 207/69, 42/9, and 150/50 for VGGSound-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and ActivityNet-GZSL\textsuperscript{\textit{cls}}, respectively. The seen training and validation sets share the same class set but contain different sample subsets.
@@ -40,13 +40,13 @@ We evaluate performance on seen and unseen classes using $\text{S},$ $\text{U},$
 \subsubsection{Baselines}\label{sec:baselines}
 
 % DOCX body[121]
-We compare our model with five conventional ZSL methods and 14 audio-visual GZSL methods. The conventional methods are DeViSE \cite{frome2013devise}, ALE \cite{akata2016ale}, SJE \cite{akata2015sje}, APN \cite{xu2020apn}, and f-VAEGAN-D2 \cite{xian2019fvaegan}, all of which take audio and visual features as input in this setting. The audio-visual GZSL methods include CJME \cite{parida2020cjme}, AVGZSLNet \cite{mazumder2021avgzslnet}, AVCA \cite{mercea2022avca}, TCaF \cite{mercea2022tcaf}, Hyper-multiple \cite{hong2023hyperbolic}, KDA \cite{chen2023kda}, STFT \cite{li2024stft}, ClipClap-GZSL \cite{kurzendorfer2024clipclap}, EZ-AVGZL \cite{mo2024easy}, MSTR \cite{yang2025mstr}, MDST++ \cite{li2025mdst}, SACMA \cite{yang2026sacma}, and SGPAN. These approaches investigate audio-visual zero-shot recognition through joint embeddings, cross-modal interaction, temporal modeling, class hierarchies, and enhanced textual semantics.
+We compare our model with five conventional ZSL methods and 14 audio-visual GZSL methods. The conventional methods are DeViSE \cite{frome2013devise}, ALE \cite{akata2016ale}, SJE \cite{akata2015sje}, APN \cite{xu2020apn}, and f-VAEGAN-D2 \cite{xian2019fvaegan}, all of which take audio and visual features as input in this setting. The audio-visual GZSL methods include CJME \cite{parida2020cjme}, AVGZSLNet \cite{mazumder2021avgzslnet}, AVCA \cite{mercea2022avca}, TCaF \cite{mercea2022tcaf}, AVFS \cite{zheng2023avfs}, Hyper-multiple \cite{hong2023hyperbolic}, KDA \cite{chen2023kda}, STFT \cite{li2024stft}, ClipClap-GZSL \cite{kurzendorfer2024clipclap}, EZ-AVGZL \cite{mo2024easy}, MSTR \cite{yang2025mstr}, MDST++ \cite{li2025mdst}, SACMA \cite{yang2026sacma}, and SGPAN. These approaches investigate audio-visual zero-shot recognition through joint embeddings, cross-modal interaction, temporal modeling, class hierarchies, and enhanced textual semantics.
 
 % DOCX body[122]
 \subsection{Quantitative Results}\label{sec:quantitative-results}
 
 % DOCX body[124]
-\input{tables/table-02-main-results.tex}
+% Table 2 is scheduled in a page-top panel.
 
 % DOCX body[126]
 Table~\ref{tab:main-results} compares the methods on the three benchmarks. SGTG achieves HM scores of 22.78\%, 60.63\%, and 31.49\% on VGGSound-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and ActivityNet-GZSL\textsuperscript{\textit{cls}}, respectively, ranking first on all three datasets. Relative to the strongest HM baseline on each dataset\textemdash{}ClipClap-GZSL, EZ-AVGZL, and ClipClap-GZSL\textemdash{}the improvements are 7.05, 2.39, and 4.38 percentage points, respectively. Relative to ClipClap-GZSL alone, the corresponding gains are 7.05, 5.50, and 4.38 percentage points. SGTG also achieves the highest unseen-class accuracies, reaching 16.87\%, 46.97\%, and 23.61\%. On ActivityNet-GZSL\textsuperscript{\textit{cls}}, for example, it improves S from 44.89\% to 47.28\% and U from 19.42\% to 23.61\% over ClipClap-GZSL, indicating that the HM gain accompanies improvements in both seen- and unseen-class recognition. On UCF-GZSL\textsuperscript{\textit{cls}}, MSTR obtains a slightly higher S of 86.32\% than our 85.49\%, but its U and HM are only 19.97\% and 32.43\%. In contrast, SGTG retains high seen-class accuracy while substantially improving unseen-class recognition. Thus, its advantage lies in balancing the two recognition objectives rather than maximizing seen-class accuracy alone.
@@ -58,7 +58,7 @@ Table~\ref{tab:main-results} compares the methods on the three benchmarks. SGTG 
 \subsubsection{Effect of Core Components}\label{sec:effect-of-core-components}
 
 % DOCX body[130]
-\input{tables/table-03-core-components.tex}
+% Table 3 is scheduled in a page-top panel.
 
 % DOCX body[132]
 Table~\ref{tab:core-components} compares SGTG with three variants, each removing one component. Removing CGTA reduces HM by 13.88, 34.63, and 9.10 percentage points on the three datasets, respectively. Its removal causes the largest decrease among the three variants on VGGSound-GZSL\textsuperscript{\textit{cls}} and UCF-GZSL\textsuperscript{\textit{cls}}, indicating that class-relevant temporal evidence extraction is particularly important for these benchmarks. Removing DSPO lowers HM by 10.25, 23.01, and 13.37 percentage points and has the greatest impact on ActivityNet-GZSL\textsuperscript{\textit{cls}}. Removing DMIF decreases HM by 9.07, 9.22, and 3.99 percentage points, confirming the value of decoupled interaction and adaptive fusion after temporal evidence extraction. Together, these results show that DSPO strengthens the semantic references, CGTA extracts class-relevant temporal evidence, and DMIF coordinates evidence from different sources. Their combination improves the balance between seen- and unseen-class recognition.
@@ -67,7 +67,7 @@ Table~\ref{tab:core-components} compares SGTG with three variants, each removing
 \subsubsection{Temporal Aggregation Strategies}\label{sec:temporal-aggregation-strategies}
 
 % DOCX body[135]
-\input{tables/table-04-temporal-strategies.tex}
+% Table 4 is scheduled in a page-top panel.
 
 % DOCX body[137]
 Table~\ref{tab:temporal-strategies} evaluates four temporal aggregation strategies: uniform temporal pooling; discrete Top-K selection, which retains $K$ segments according to relevance scores; uniform routing, which retains the Gaussian experts but replaces the adaptive weights in \eqref{eq:expert-routing} with a fixed weight of $\frac{1}{E};$ and the full CGTA module, which combines continuous Gaussian aggregation with adaptive expert routing. Full CGTA achieves the highest HM on all three datasets. It improves HM over uniform pooling by 7.70, 13.09, and 5.65 percentage points and over discrete Top-K selection by 7.31, 10.52, and 7.55 percentage points, respectively. Uniform pooling does not distinguish class-relevant segments from background segments and may therefore dilute useful evidence. Although Top-K selection explicitly filters segments, it may break continuous cues spanning multiple intervals. In contrast, multiple Gaussian weights organize evidence continuously across temporal regions, matching our objective of selecting local cues while preserving temporal context.
@@ -76,7 +76,7 @@ Table~\ref{tab:temporal-strategies} evaluates four temporal aggregation strategi
 \subsubsection{Number of Gaussian Experts in CGTA}\label{sec:number-of-gaussian-experts-in-cgta}
 
 % DOCX body[140]
-\input{tables/table-05-expert-count.tex}
+% Table 5 is scheduled in a page-top panel.
 
 % DOCX body[142]
 Table~\ref{tab:expert-count} evaluates five expert counts, $E\in \{1,3,5,7,9\},$ to examine the effect of temporal coverage granularity. Among the tested configurations, $E=7$ achieves the highest HM on all three datasets. Compared with the single-expert configuration ($E=1$), it improves HM by 8.16, 26.36, and 11.55 percentage points, indicating that multiple temporal windows help represent class-relevant evidence distributed across different intervals. However, performance does not increase monotonically with the number of experts. On VGGSound-GZSL\textsuperscript{\textit{cls}}, for example, HM decreases from 16.09\% with $E=3$ to 13.85\% with $E=5.$ Increasing the expert count from seven to nine reduces HM by 5.74, 0.53, and 3.85 percentage points on the three datasets, respectively. Additional experts may introduce redundant temporal coverage and more complex routing assignments. Therefore, within the range examined in this study, seven experts provide the best balance between seen- and unseen-class performance across the three benchmarks.
@@ -85,7 +85,7 @@ Table~\ref{tab:expert-count} evaluates five expert counts, $E\in \{1,3,5,7,9\},$
 \subsubsection{Optimization Objectives in DSPO}\label{sec:optimization-objectives-in-dspo}
 
 % DOCX body[145]
-\input{tables/table-06-prototype-objectives.tex}
+% Table 6 is scheduled in a page-top panel.
 
 % DOCX body[147]
 Table~\ref{tab:prototype-objectives} compares four class embedding configurations: the initial class embeddings ${\boldsymbol{w}}_{c}^{(0)}$ without optimization; optimization with only the separation loss ${\mathcal{L}}_{\mathrm{sep}};$ optimization with only the margin ranking loss ${\mathcal{L}}_{\mathrm{rank}};$ and optimization with the joint objective $\mathcal{L}$ in \eqref{eq:prototype-objective}. Joint optimization achieves the highest HM on all three datasets, improving over the initial class embeddings by 10.25, 23.01, and 13.37 percentage points. Both individual losses improve HM. With ${\mathcal{L}}_{\mathrm{sep}}$ alone, HM reaches 16.94\% on VGGSound-GZSL\textsuperscript{\textit{cls}} and 29.16\% on ActivityNet-GZSL\textsuperscript{\textit{cls}}, exceeding the respective 15.63\% and 26.26\% obtained with ${\mathcal{L}}_{\mathrm{rank}}$ alone. On UCF-GZSL\textsuperscript{\textit{cls}}, however, ${\mathcal{L}}_{\mathrm{rank}}$ alone achieves an HM of 55.13\%, compared with 48.38\% for ${\mathcal{L}}_{\mathrm{sep}}$ alone. Thus, emphasizing either class separability or semantic preservation in isolation is insufficient to obtain the best overall performance across datasets. The joint objective provides a more effective balance between class separability and semantic preservation.
@@ -94,7 +94,7 @@ Table~\ref{tab:prototype-objectives} compares four class embedding configuration
 \subsubsection{Interaction Branches and Gating in DMIF}\label{sec:interaction-branches-and-gating-in-dmif}
 
 % DOCX body[150]
-\input{tables/table-07-interaction-gating.tex}
+% Table 7 is scheduled in a page-top panel.
 
 % DOCX body[152]
 Table~\ref{tab:interaction-gating} reports the ablation results for different DMIF branches and gating strategies. The single-branch results indicate that the benefits of different interactions vary across datasets. The inter-modal-only branch achieves HM scores of 13.75\%, 39.53\%, and 16.71\% on VGGSound-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and ActivityNet-GZSL\textsuperscript{\textit{cls}}, respectively, compared with 13.70\%, 38.45\%, and 16.24\% for the intra-modal-only branch. Intra-modal interaction retains discriminative cues within each modality, whereas inter-modal interaction exploits complementary audio-visual relationships; their relative importance varies with the data and candidate class. Compared with equal averaging of the three evidence sources, full gating improves HM by 13.02, 14.13, and 8.94 percentage points. On VGGSound-GZSL\textsuperscript{\textit{cls}} in particular, equal averaging yields an HM of only 9.76\%, below both single-branch configurations. This finding shows that adding evidence does not necessarily improve recognition: fusion with fixed proportions may allow weakly relevant information to interfere with useful cues. The value of DMIF therefore lies not merely in introducing additional interaction branches but in selectively organizing and exploiting evidence from different sources.
@@ -103,7 +103,7 @@ Table~\ref{tab:interaction-gating} reports the ablation results for different DM
 \subsubsection{Text Encoders}\label{sec:text-encoders}
 
 % DOCX body[155]
-\input{tables/table-08-text-encoders.tex}
+% Table 8 is scheduled in a page-top panel.
 
 % DOCX body[157]
 Table~\ref{tab:text-encoders} compares different text encoders. CLAP alone achieves HM scores of 15.59\% on VGGSound-GZSL\textsuperscript{\textit{cls}} and 21.18\% on ActivityNet-GZSL\textsuperscript{\textit{cls}}, exceeding the corresponding 13.61\% and 20.01\% of CLIP alone. On UCF-GZSL\textsuperscript{\textit{cls}}, however, CLIP alone achieves an HM of 44.24\%, compared with 40.41\% for CLAP alone. Combining the two text encoders improves all four metrics over either single-encoder alternative on all three datasets. Relative to the stronger single encoder for each dataset, the HM gains are 7.19, 16.39, and 10.31 percentage points, respectively. These results suggest that combining CLIP and CLAP class label embeddings provides complementary textual information aligned with the visual and audio modalities, supporting class embedding optimization and class-conditioned encoding.
@@ -115,10 +115,10 @@ Table~\ref{tab:text-encoders} compares different text encoders. CLAP alone achie
 We compare four description strategies in Table~\ref{tab:descriptions}: class name prompts alone, prompts supplemented with fine-grained visual descriptions, prompts supplemented with fine-grained auditory descriptions, and the complete combination of visual and auditory descriptions.
 
 % DOCX body[161]
-\input{tables/table-09-descriptions.tex}
+% Table 9 is scheduled in a page-top panel.
 
 % DOCX body[166]
-\input{figures/figure-03-tsne.tex}
+% Figure 3 is scheduled before the conclusion.
 
 % DOCX body[163]
 Table~\ref{tab:descriptions} shows that adding fine-grained descriptions from either modality improves both HM and ZSL on all three datasets over class name prompts alone. Visual descriptions yield HM scores of 19.10\% on VGGSound-GZSL\textsuperscript{\textit{cls}} and 47.12\% on UCF-GZSL\textsuperscript{\textit{cls}}, exceeding the 14.35\% and 40.15\% obtained with auditory descriptions. Combining visual and auditory descriptions increases HM over class name prompts by 11.49, 27.09, and 15.85 percentage points and over visual descriptions alone by 3.68, 13.51, and 8.92 percentage points. These results indicate that class names mainly provide coarse semantic identifiers, whereas explicit descriptions of actions, appearance, and sounds supply more precise queries derived from class descriptions, linking semantic matching to discriminative audio-visual evidence.
@@ -127,9 +127,6 @@ Table~\ref{tab:descriptions} shows that adding fine-grained descriptions from ei
 \subsection{t-SNE Visualization}\label{sec:t-sne-visualization}
 
 % DOCX body[165]
-We use t-SNE \cite{maaten2008tsne} to analyze the audio input features, visual input features, and class-conditioned output embeddings. Class-based coloring distinguishes seen and unseen samples, allowing comparison of intra-class compactness, inter-class separation, and the relative positions of samples and class embeddings. For the output embeddings, we examine distributions conditioned on the ground-truth and predicted classes separately to distinguish class-conditioned representation structure from actual prediction behavior.
+We use t-SNE \cite{maaten2008tsne} to analyze the audio input features, visual input features, and class-conditioned output embeddings (Fig.~\ref{fig:tsne}). Class-based coloring distinguishes seen and unseen samples, allowing comparison of intra-class compactness, inter-class separation, and the relative positions of samples and class embeddings. For the output embeddings, we examine distributions conditioned on the ground-truth and predicted classes separately to distinguish class-conditioned representation structure from actual prediction behavior.
 
-
-
-% DOCX body[168]
-Fig.~\ref{fig:tsne} presents the t-SNE embedding distributions of SGTG on ActivityNet-GZSL\textsuperscript{\textit{cls}}, UCF-GZSL\textsuperscript{\textit{cls}}, and VGGSound-GZSL\textsuperscript{\textit{cls}}. Specifically, it shows the audio input features, visual input features, and learned joint audio-visual embeddings for six classes. The original audio and visual features are relatively scattered, with indistinct class boundaries. In contrast, the joint embeddings learned by SGTG form more compact and clearly separated clusters. These observations further support the ability of the proposed method to align audio-visual samples with their corresponding class embeddings.
+% Keep vector visualization on a mixed figure/text page with the conclusion.

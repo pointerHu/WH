@@ -358,3 +358,48 @@ main.tex 已停用 reference_order.tex；后者仅保留退役说明。编号由
 纯排版变更：取消不必要的longmktitle，使引言接在首页摘要后；用项目局部包将误导的模板submitted页脚改为prepared；参考文献按完整段落分页；拒收balance试排的输出例程副作用，最终不使用balance。原CAS文件、数学含义和科学措辞未改。
 
 未使用的演示template.tex、reference_order.tex和cas-model2-names.bst移入本地audit/stage5/archived-unused；保留版权和许可，不混入最终稿或投稿包。详细日志、视觉与全文核验见QA_REPORT.md；待确认事项见TODO.md。GitHub公开上传因缺少明确公开授权而暂停，实际本地提交状态见git_sync_status.json。
+
+## 2026-09-24 更新：独立投稿附件与用户授权声明
+
+本节覆盖此前文末不含声明的历史状态。用户确认沿用CAS-DC；原五章正文、作者七人名单、摘要、公式、表格、图注及references.bib不改。
+
+新增 source/sections/06-declarations.tex，由main.tex在结论后input。新增的CRediT来自用户提供的五人角色文字，Funding来自用户明确授权的KA_GZSL_TMM/KA-GZSL_TMM.tex资助句，利益冲突来自用户给定英文原句。这些是明确授权的新增内容，不伪装成Word原有内容。Xinru Yi、Minyi Guo的角色仍待补充；资助方作用未给出。数据共享和AI声明按用户指令暂缓，没有插入。
+
+submission_materials中已保存四条Highlights、七问Cover Letter草稿及三份作者/资助/利益冲突Word文件。Highlights 78/71/76/75字符；Cover Letter前六问依据Sections2–4及现有文献撰写，第七问涉及作者事实，显式待确认。封面信不是论文正文，五篇关键比较文献不改变论文原32篇引用编号。
+
+重新核验74个正文/列表单位、29个标题、244个原始数学对象、32独立公式、814个表格格、608个最终PDF数字和12个图注表题全部通过；67组/69次引文身份无错配。当前PDF15页，新增声明位于第14页。主PDF、submission_flat和源码ZIP均已更新且本地XeLaTeX/BibTeX验证通过，构建入口与日志详见QA_REPORT.md第9节。
+
+本轮没有Git暂存、提交或推送；数据/AI范围与作者事实待办详见TODO.md。所有原始46个材料保持不变；旧交付物保留在audit/stage6/before。
+
+
+## 第七阶段更新（2026-09-25）
+
+Funding标题按要求改为Acknowledgement；资助正文及编号不变。表2–表9按各数据集的每个指标列最高值加粗，96列核验通过，20个数值格调整字重；不再整行强调本方法。表2的19个基线添加实际引用版本的期刊/会议/平台及年份。
+
+全部814个物理格的内容核对通过；608个渲染数字原字串不变，576个指标字重逐项从PDF字体资源核验。原正文、作者、公式、图注、实验数值和文献库未改。当前主PDF仍15页；主工程与扁平目录均已在VOA XeLaTeX+BibTeX独立构建通过，ZIP已更新。详见STAGE7_CHANGELOG.md和audit/stage7/。
+
+当前构建目录source/build-stage7-20260925。此次只保存本地，不提交或推送；数据和AI范围仍暂缓。
+
+
+## 第八阶段更新：表后Note与图3（2026-09-25）
+
+删除8条表后Note及对应宏，保持全部数值、最高值粗体和方法出处。4.4第二段已转为图3图注，正文删除重复段落，保留的第一段增加自动图3引用。图3改用用户提供的tsne.pdf矢量原文件，项目副本与原文件逐字节一致；原PNG仅留审计备份，不再打入源包。
+
+当前PDF仍15页，图3在第13页；source/build-stage8-20260925和独立扁平目录均由VOA的XeLaTeX+BibTeX成功编译。814格、608个PDF数字、576个指标字重核验通过，原74个正文/列表内容单元为73个正文加1个移至图注；未改实验数据。详情见STAGE8_CHANGELOG.md及audit/stage8/。
+
+## 第九阶段更新（2026-09-25）：where、公式(5)/(27)、AVFS
+
+已统一24处公式后where说明（小写、无首行缩进、无额外段落空行），另规范2处行内Here；仅公式(5)/(27)局部9pt，数学token核验一致。公式(5)紧凑排版，公式(27)三行改两行。AVFS按用户授权复用旧key 6，新增zheng2023avfs，在表2和4.1.4均为自动引用[26]，原文献自动顺延，共33篇。原32条元数据不变。
+
+当前15页、3图、9表。814格、608个PDF数字与576个指标字重均核验通过，96列最高值不变，Note保持删除；图3矢量PDF及新图注保持。本轮原始46文件和tsne.pdf未改，正文除已记录where及AVFS补引外不改写。
+
+主工程source/build-stage9-final-20260925与submission_flat实际XeLaTeX/BibTeX构建均退出0；最终PDF、源码ZIP和main.bbl已同步。实际查看第4–15页，独立源包同范围逐像素一致。缺字、未解析引文及重复label为0，既有1个标题overfull、5个空锚点、60个underfull及1个Adam页码提示保留。日志、逐项数学及引用核验在audit/stage9/。未提交或推送Git，未处理数据共享/AI范围，未改独立Word附件。
+
+## Stage 10：本轮授权的差异与映射
+
+Word body2的关键词按用户改为4项；body41在公式5前新增三个短定义及有序三元组集合的文字说明；body42的公式5使用等价简写，仍对应eq:ranking-loss。没有增加显示公式编号。body106开始的实验正文及次序不变，仅表格/图3排版入口改由页顶分组调用；完整分组和最终页码见STAGE10_CHANGELOG.md。表格9个文件、图3及图注均逐字/逐字节不变。citation_map.csv的71个引用目标位置已更新，33篇文献和编号未改变。
+
+
+## 2026-09-25 第十一阶段：文字连续排版
+
+已去除第8页起的人为分页和逐页短栏平衡。表1至表9仍位于第9至13页页顶，分组不变；图3仍位于第14页。文字连续接排，最终15页。第1–7页内容和版式保持，仅页脚总页数自动更新。正文、公式、图表、声明与文献没有改写。第8–15页实际查看，主工程与扁平稿15页渲染逐像素一致。详细说明见 STAGE11_CHANGELOG.md 和 audit/stage11/；构建日志 source/build-stage11-r1/console.log。

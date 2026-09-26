@@ -189,6 +189,14 @@ Y.~Xian, S.~Sharma, B.~Schiele, Z.~Akata, {F-VAEGAN-D2: A Feature Generating
 \newblock \href {https://doi.org/10.1109/CVPR.2019.01052}
   {\path{doi:10.1109/CVPR.2019.01052}}.
 
+\bibitem{zheng2023avfs}
+Q.~Zheng, J.~Hong, M.~Farazi, {A Generative Approach to Audio-Visual
+  Generalized Zero-Shot Learning: Combining Contrastive and Discriminative
+  Techniques}, in: 2023 International Joint Conference on Neural Networks
+  (IJCNN), 2023, pp. 1--8.
+\newblock \href {https://doi.org/10.1109/IJCNN54540.2023.10191705}
+  {\path{doi:10.1109/IJCNN54540.2023.10191705}}.
+
 \bibitem{hong2023hyperbolic}
 J.~Hong, Z.~Hayder, J.~Han, P.~Fang, M.~Harandi, L.~Petersson, {Hyperbolic
   Audio-visual Zero-shot Learning}, in: Proceedings of the IEEE/CVF
